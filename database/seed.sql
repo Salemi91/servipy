@@ -1,0 +1,3 @@
+-- ServiPy - Seed Data
+-- Este archivo contendrá datos iniciales para desarrollo local.
+-- No incluir credenciales reales ni datos de producción.

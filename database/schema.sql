@@ -1,0 +1,3 @@
+-- ServiPy - Database Schema
+-- Este archivo contendrá las definiciones de tablas del MVP.
+-- No agregar datos aquí; usar seed.sql para datos iniciales.
