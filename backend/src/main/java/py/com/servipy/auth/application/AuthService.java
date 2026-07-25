@@ -1,5 +1,7 @@
 package py.com.servipy.auth.application;
 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import py.com.servipy.auth.domain.Role;
@@ -11,8 +13,6 @@ import py.com.servipy.auth.infrastructure.web.RegisterRequest;
 import py.com.servipy.auth.infrastructure.web.UserResponse;
 import py.com.servipy.shared.exception.AccountInactiveException;
 import py.com.servipy.shared.exception.DuplicateEmailException;
-
-import org.springframework.security.authentication.BadCredentialsException;
 
 /**
  * Servicio de aplicación para registro y autenticación de usuarios.
@@ -67,6 +67,20 @@ public class AuthService {
 
         String token = jwtService.generateToken(user);
         return AuthResponse.bearer(token, UserResponse.from(user));
+    }
+
+    /**
+     * Obtiene la información del usuario autenticado por su ID.
+     * Retorna UserResponse si el usuario existe y está activo.
+     *
+     * @throws AuthenticationException si el usuario no existe o está inactivo
+     */
+    public UserResponse getCurrentUser(Long userId) {
+        User user = userRepository.findById(userId)
+            .filter(User::getActive)
+            .orElseThrow(() -> new BadCredentialsException("No autorizado"));
+
+        return UserResponse.from(user);
     }
 
     private AuthResponse register(RegisterRequest request, Role role) {
