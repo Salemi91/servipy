@@ -1,0 +1,16 @@
+# Perfil de producción.
+# Todas las propiedades sensibles se leen de variables de entorno.
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  flyway:
+    enabled: true
