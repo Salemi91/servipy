@@ -1,0 +1,50 @@
+<nav aria-label="Progreso del registro" class="mb-8">
+  <ol class="flex items-center justify-center gap-2 sm:gap-4">
+    @for (step of steps; track step.number; let last = $last) {
+      <li class="flex items-center">
+        <!-- Step indicator -->
+        <div class="flex flex-col items-center">
+          <div
+            [ngClass]="{
+              'bg-indigo-600 text-white': isCurrent(step.number),
+              'bg-green-500 text-white': isCompleted(step.number),
+              'bg-gray-200 text-gray-500': !isCurrent(step.number) && !isCompleted(step.number)
+            }"
+            class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-colors sm:h-11 sm:w-11"
+          >
+            @if (isCompleted(step.number)) {
+              <!-- Checkmark icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            } @else {
+              {{ step.number }}
+            }
+          </div>
+          <!-- Label (hidden on small screens) -->
+          <span
+            [ngClass]="{
+              'text-indigo-600 font-medium': isCurrent(step.number),
+              'text-green-600 font-medium': isCompleted(step.number),
+              'text-gray-400': !isCurrent(step.number) && !isCompleted(step.number)
+            }"
+            class="mt-1.5 hidden text-xs sm:block"
+          >
+            {{ step.label }}
+          </span>
+        </div>
+
+        <!-- Connector line -->
+        @if (!last) {
+          <div
+            [ngClass]="{
+              'bg-green-500': isCompleted(step.number),
+              'bg-gray-200': !isCompleted(step.number)
+            }"
+            class="mx-2 h-0.5 w-8 transition-colors sm:mx-3 sm:w-12"
+          ></div>
+        }
+      </li>
+    }
+  </ol>
+</nav>

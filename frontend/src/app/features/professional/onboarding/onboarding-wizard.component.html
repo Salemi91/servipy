@@ -1,0 +1,31 @@
+<div class="mx-auto max-w-2xl py-6">
+  <app-progress-bar [currentStep]="currentStep" [totalSteps]="totalSteps" />
+
+  <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm sm:p-8">
+    @switch (currentStep) {
+      @case (1) {
+        <app-profile-step
+          [initialData]="profileData"
+          (stepCompleted)="onProfileCompleted($event)"
+        />
+      }
+      @case (2) {
+        <app-services-step
+          [initialData]="servicesData"
+          (stepCompleted)="onServicesCompleted($event)"
+          (goBack)="onGoBackToProfile()"
+        />
+      }
+      @case (3) {
+        @if (profileData && servicesData) {
+          <app-confirmation-step
+            [profileData]="profileData"
+            [servicesData]="servicesData"
+            (goBack)="onGoBackToServices()"
+            (confirmed)="onConfirmed()"
+          />
+        }
+      }
+    }
+  </div>
+</div>
