@@ -1,0 +1,57 @@
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+  <h1 class="mb-6 text-2xl font-bold text-gray-900">Profesionales</h1>
+
+  <!-- Filters -->
+  <div class="mb-6 space-y-4">
+    <app-search-bar (searchChanged)="onSearchChanged($event)"></app-search-bar>
+    <app-category-filter
+      [categories]="categories()"
+      [selectedCategoryId]="selectedCategoryId()"
+      (categorySelected)="onCategorySelected($event)"
+    ></app-category-filter>
+  </div>
+
+  <!-- Loading State -->
+  <app-loading-state *ngIf="state() === 'loading'"></app-loading-state>
+
+  <!-- Error State -->
+  <app-error-state
+    *ngIf="state() === 'error'"
+    (retry)="onRetry()"
+  ></app-error-state>
+
+  <!-- Loaded State -->
+  <ng-container *ngIf="state() === 'loaded'">
+    <!-- Empty State -->
+    <app-empty-state
+      *ngIf="professionals().length === 0"
+      [hasFilters]="hasFilters()"
+      (clearFilters)="onClearFilters()"
+    ></app-empty-state>
+
+    <!-- Professional Cards Grid -->
+    <div
+      *ngIf="professionals().length > 0"
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+    >
+      <app-professional-card
+        *ngFor="let pro of professionals()"
+        [professional]="pro"
+      ></app-professional-card>
+    </div>
+
+    <!-- Load More -->
+    <div
+      *ngIf="professionals().length > 0 && currentPage() + 1 < totalPages()"
+      class="mt-6 text-center"
+    >
+      <button
+        type="button"
+        (click)="onLoadMore()"
+        class="min-h-[44px] min-w-[44px] rounded-lg border border-blue-600 px-6 py-2 text-sm font-medium text-blue-600 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        Cargar más
+      </button>
+    </div>
+  </ng-container>
+</div>

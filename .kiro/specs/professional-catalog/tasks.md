@@ -6,15 +6,15 @@ Implementación del módulo de catálogo público que permite a visitantes explo
 
 ## Tasks
 
-- [ ] 1. Database migration and JPA entities
-  - [ ] 1.1 Create Flyway migration V2__catalog_tables.sql
+- [x] 1. Database migration and JPA entities
+  - [x] 1.1 Create Flyway migration V2__catalog_tables.sql
     - Create file `backend/src/main/resources/db/migration/V2__catalog_tables.sql`
     - Define tables: countries, cities, categories, users, professional_profiles, offered_services
     - Add foreign keys, indexes for approval_status, active flags, and category filtering
     - Use InnoDB engine with utf8mb4 charset
     - _Requirements: 1.1, 2.1, 4.1_
 
-  - [ ] 1.2 Create domain entities and enums
+  - [x] 1.2 Create domain entities and enums
     - Create `py.com.servipy.user.domain.User` entity with Role enum
     - Create `py.com.servipy.user.domain.Role` enum (CLIENT, PROFESSIONAL, ADMIN)
     - Create `py.com.servipy.country.domain.Country` entity
@@ -26,14 +26,14 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - Create `py.com.servipy.professional.domain.OfferedService` entity with relationships
     - _Requirements: 1.1, 1.2, 4.1_
 
-  - [ ] 1.3 Create repositories
+  - [x] 1.3 Create repositories
     - Create `ProfessionalProfileRepository` extending JpaRepository and JpaSpecificationExecutor with custom `findActiveById` query using fetch joins
     - Create `OfferedServiceRepository` extending JpaRepository
     - Create `CategoryRepository` extending JpaRepository with `findByActiveTrueOrderByNameAsc`
     - _Requirements: 1.1, 2.4, 4.1_
 
-- [ ] 2. Backend services and specification
-  - [ ] 2.1 Implement ProfessionalSpecification
+- [x] 2. Backend services and specification
+  - [x] 2.1 Implement ProfessionalSpecification
     - Create `py.com.servipy.professional.application.spec.ProfessionalSpecification`
     - Implement static `build(Long categoryId, String search)` method
     - Implement predicates: isApproved, userIsActive, hasActiveServices, inCategory, matchesSearch
@@ -41,14 +41,14 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - Return null for nullable/blank parameters (JPA Specification ignores nulls)
     - _Requirements: 1.1, 2.1, 3.1, 3.2, 3.4_
 
-  - [ ] 2.2 Implement DTOs
+  - [x] 2.2 Implement DTOs
     - Create `ProfessionalSummaryDto` record (id, name, professionalTitle, categoryName, description, cityName, referencePrice, availability, photoUrl)
     - Create `ProfessionalDetailDto` record (id, name, photoUrl, phone, whatsapp, description, cityName, availability, services)
     - Create `OfferedServiceDto` record (id, name, description, price, currency, categoryName)
     - Create `CategoryDto` record (id, name, icon, description)
     - _Requirements: 1.2, 4.1_
 
-  - [ ] 2.3 Implement ProfessionalCatalogService
+  - [x] 2.3 Implement ProfessionalCatalogService
     - Create `py.com.servipy.professional.application.ProfessionalCatalogService`
     - Implement `findAll(Long categoryId, String search, Pageable pageable)` returning Page<ProfessionalSummaryDto>
     - Implement `findById(Long id)` returning ProfessionalDetailDto, throwing ResourceNotFoundException if not found
@@ -56,12 +56,12 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - Implement `toDetailDto` mapping with full description and active services list
     - _Requirements: 1.1, 1.2, 1.7, 2.1, 3.1, 4.1, 4.2_
 
-  - [ ] 2.4 Implement CategoryService
+  - [x] 2.4 Implement CategoryService
     - Create `py.com.servipy.category.application.CategoryService`
     - Implement `findAllActive()` returning List<CategoryDto> mapped from active categories
     - _Requirements: 2.4_
 
-  - [ ]* 2.5 Write unit tests for ProfessionalCatalogService
+  - [x]* 2.5 Write unit tests for ProfessionalCatalogService
     - Create `ProfessionalCatalogServiceTest` using JUnit 5 + Mockito
     - Test: should_returnOnlyApprovedProfessionals_when_listAll
     - Test: should_capSizeTo50_when_sizeExceeds50 (via controller cap logic)
@@ -77,7 +77,7 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - Test: should_returnMinPrice_when_multipleServicesExist
     - _Requirements: 1.1, 1.2, 1.6, 2.1, 2.2, 3.1, 3.2, 3.4, 4.1, 4.2_
 
-  - [ ]* 2.6 Write unit tests for CategoryService
+  - [x]* 2.6 Write unit tests for CategoryService
     - Create `CategoryServiceTest` using JUnit 5 + Mockito
     - Test: should_returnOnlyActiveCategories_when_listAll
     - Test: should_returnEmptyList_when_noCategoriesActive
@@ -92,36 +92,36 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - **Property 9: Whitespace search normalization** — Generate whitespace-only strings; assert same results as no search
     - **Validates: Requirements 1.1, 1.2, 1.6, 2.1, 3.1, 3.4**
 
-- [ ] 3. Backend controllers and error handling
-  - [ ] 3.1 Create ResourceNotFoundException and modify GlobalExceptionHandler
+- [x] 3. Backend controllers and error handling
+  - [x] 3.1 Create ResourceNotFoundException and modify GlobalExceptionHandler
     - Create `py.com.servipy.shared.exception.ResourceNotFoundException` extending RuntimeException
     - Add handler for `ResourceNotFoundException` returning 404 with code "PROFESSIONAL_NOT_FOUND"
     - Add handler for `MethodArgumentTypeMismatchException` returning 400 with code "INVALID_PARAMETER"
     - _Requirements: 2.3, 4.2, 4.3_
 
-  - [ ] 3.2 Implement ProfessionalCatalogController
+  - [x] 3.2 Implement ProfessionalCatalogController
     - Create `py.com.servipy.professional.infrastructure.web.ProfessionalCatalogController`
     - Implement GET /api/v1/professionals with params: categoryId (optional Long), search (optional String), page (default 0), size (default 12)
     - Cap size at 50 (min 1), sort by user.name ascending
     - Implement GET /api/v1/professionals/{id} returning ProfessionalDetailDto
     - _Requirements: 1.1, 1.3, 1.4, 1.5, 1.6, 1.7, 2.1, 3.1, 4.1, 4.2_
 
-  - [ ] 3.3 Implement CategoryController
+  - [x] 3.3 Implement CategoryController
     - Create `py.com.servipy.category.infrastructure.web.CategoryController`
     - Implement GET /api/v1/categories returning List<CategoryDto>
     - _Requirements: 2.4_
 
-  - [ ] 3.4 Modify SecurityConfig to whitelist catalog endpoints
+  - [x] 3.4 Modify SecurityConfig to whitelist catalog endpoints
     - Add `.requestMatchers(HttpMethod.GET, "/api/v1/professionals/**").permitAll()`
     - Add `.requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()`
     - Import `HttpMethod` in SecurityConfig
     - _Requirements: 7.1, 7.2, 7.4_
 
-  - [ ] 3.5 Add jqwik dependency to pom.xml
+  - [x] 3.5 Add jqwik dependency to pom.xml
     - Add jqwik 1.8.5 with test scope to backend pom.xml
     - _Requirements: Testing infrastructure_
 
-  - [ ]* 3.6 Write controller integration tests
+  - [x]* 3.6 Write controller integration tests
     - Create `ProfessionalCatalogControllerTest` using MockMvc
     - Test: should_return200_when_getProfessionalsWithoutAuth
     - Test: should_return200_when_getCategoriesWithoutAuth
@@ -137,17 +137,17 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - **Property 10: Non-active professional detail returns 404** — Generate ids of non-active professionals; assert 404
     - **Validates: Requirements 1.7, 2.3, 2.4, 4.2**
 
-- [ ] 4. Checkpoint - Backend verification
+- [x] 4. Checkpoint - Backend verification
   - Ensure all tests pass with `./mvnw test`. Ask the user if questions arise.
 
-- [ ] 5. Frontend models and services
-  - [ ] 5.1 Create shared TypeScript models
+- [x] 5. Frontend models and services
+  - [x] 5.1 Create shared TypeScript models
     - Create `src/app/shared/models/professional.model.ts` with ProfessionalSummary, ProfessionalDetail, OfferedServiceItem interfaces
     - Create `src/app/shared/models/category.model.ts` with Category interface
     - Create `src/app/shared/models/paginated-response.model.ts` with generic PaginatedResponse<T> interface
     - _Requirements: 1.2, 1.4, 2.4, 4.1_
 
-  - [ ] 5.2 Implement CatalogService
+  - [x] 5.2 Implement CatalogService
     - Create `src/app/features/public/catalog/services/catalog.service.ts`
     - Implement `getProfessionals(params)` calling GET /professionals with query string building
     - Implement `getProfessionalById(id)` calling GET /professionals/:id
@@ -164,8 +164,8 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - Test: should call GET /categories
     - _Requirements: 1.3, 2.1, 3.1, 4.1, 2.4_
 
-- [ ] 6. Frontend UI components
-  - [ ] 6.1 Create presentational sub-components
+- [x] 6. Frontend UI components
+  - [x] 6.1 Create presentational sub-components
     - Create `professional-card` component (standalone, inputs: ProfessionalSummary, responsive card with Tailwind)
     - Create `category-filter` component (standalone, inputs: categories array, output: categorySelected event)
     - Create `search-bar` component (standalone, output: searchChanged event with debounce)
@@ -174,7 +174,7 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - Create `error-state` component (standalone, output: retry event)
     - _Requirements: 1.2, 2.5, 2.6, 3.1, 5.1, 5.2, 6.1, 6.2, 6.3, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6_
 
-  - [ ] 6.2 Implement CatalogListComponent
+  - [x] 6.2 Implement CatalogListComponent
     - Create `catalog-list` component (standalone) with signal-based state management
     - Manage CatalogState: 'loading' | 'loaded' | 'error'
     - Wire category-filter, search-bar, professional-card grid, empty-state, loading-state, error-state
@@ -183,7 +183,7 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - Implement retry logic on error
     - _Requirements: 1.2, 1.3, 2.5, 2.6, 3.1, 5.1, 5.2, 5.3, 6.1, 6.2, 6.3, 6.4, 8.1, 8.2, 8.3_
 
-  - [ ] 6.3 Implement CatalogDetailComponent
+  - [x] 6.3 Implement CatalogDetailComponent
     - Create `catalog-detail` component (standalone) with signal-based state
     - Read route param `:id`, call CatalogService.getProfessionalById
     - Display full professional detail: photo, name, phone, whatsapp, description, city, availability
@@ -191,7 +191,7 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - Handle 404 (professional not found) and error states
     - _Requirements: 4.1, 4.2, 6.1, 6.2_
 
-  - [ ] 6.4 Configure catalog routes and integrate into PUBLIC_ROUTES
+  - [x] 6.4 Configure catalog routes and integrate into PUBLIC_ROUTES
     - Create `src/app/features/public/catalog/catalog.routes.ts` with CATALOG_ROUTES
     - Route '' → CatalogListComponent (lazy-loaded)
     - Route ':id' → CatalogDetailComponent (lazy-loaded)
@@ -219,7 +219,7 @@ Implementación del módulo de catálogo público que permite a visitantes explo
     - **Property 11: UI state mutual exclusion** — Generate random sequences of loading/loaded/error transitions; assert exactly one state is displayed at any time
     - **Validates: Requirements 5.3, 6.1, 6.4**
 
-- [ ] 7. Final checkpoint - Full verification
+- [x] 7. Final checkpoint - Full verification
   - Ensure all backend tests pass with `./mvnw test` and frontend tests pass with `ng test --watch=false`. Ask the user if questions arise.
 
 ## Notes

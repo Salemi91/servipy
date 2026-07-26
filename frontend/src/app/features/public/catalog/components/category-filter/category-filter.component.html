@@ -1,0 +1,25 @@
+<div class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por categoría">
+  <button
+    type="button"
+    (click)="select(null)"
+    [class.bg-blue-600]="selectedCategoryId === null"
+    [class.text-white]="selectedCategoryId === null"
+    [class.bg-gray-100]="selectedCategoryId !== null"
+    [class.text-gray-700]="selectedCategoryId !== null"
+    class="min-h-[44px] min-w-[44px] rounded-full px-4 py-2 text-sm font-medium transition hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    Todas
+  </button>
+  <button
+    *ngFor="let cat of categories"
+    type="button"
+    (click)="select(cat.id)"
+    [class.bg-blue-600]="selectedCategoryId === cat.id"
+    [class.text-white]="selectedCategoryId === cat.id"
+    [class.bg-gray-100]="selectedCategoryId !== cat.id"
+    [class.text-gray-700]="selectedCategoryId !== cat.id"
+    class="min-h-[44px] min-w-[44px] rounded-full px-4 py-2 text-sm font-medium transition hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+  >
+    {{ cat.name }}
+  </button>
+</div>
