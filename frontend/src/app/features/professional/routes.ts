@@ -1,6 +1,10 @@
 import { Routes } from '@angular/router';
-import { ProfessionalPlaceholderComponent } from './professional-placeholder.component';
 
 export const PROFESSIONAL_ROUTES: Routes = [
-  { path: '', component: ProfessionalPlaceholderComponent },
+  {
+    path: 'requests/:professionalId',
+    loadChildren: () =>
+      import('./requests/requests.routes').then((m) => m.REQUESTS_ROUTES),
+  },
+  { path: '', redirectTo: 'requests/1', pathMatch: 'full' }, // demo redirect for MVP
 ];

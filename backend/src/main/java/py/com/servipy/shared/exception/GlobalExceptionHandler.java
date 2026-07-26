@@ -10,6 +10,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
@@ -22,11 +23,20 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.NOT_FOUND,
+            "PROFESSIONAL_NOT_FOUND",
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         List<ErrorResponse.FieldError> fieldErrors = ex.getBindingResult()
-            .getFieldErrors()
-            .stream()
+            .getFieldErrors().stream()
             .map(fe -> new ErrorResponse.FieldError(fe.getField(), fe.getDefaultMessage()))
             .toList();
 
@@ -46,6 +56,18 @@ public class GlobalExceptionHandler {
             HttpStatus.CONFLICT,
             "DUPLICATE_EMAIL",
             ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(InvalidStateTransitionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidTransition(InvalidStateTransitionException ex) {
+        ErrorResponse response = new ErrorResponse(
+            Instant.now().toString(),
+            HttpStatus.CONFLICT.value(),
+            "INVALID_STATE_TRANSITION",
+            ex.getMessage(),
+            List.of()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
@@ -88,6 +110,16 @@ public class GlobalExceptionHandler {
             "No autorizado"
         );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.BAD_REQUEST,
+            "INVALID_PARAMETER",
+            "El parámetro '" + ex.getName() + "' no es válido"
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

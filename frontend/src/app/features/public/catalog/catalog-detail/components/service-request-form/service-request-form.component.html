@@ -1,0 +1,188 @@
+<!-- Success View -->
+<div *ngIf="state() === 'success'" class="rounded-lg border border-green-200 bg-green-50 p-6 text-center">
+  <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+    <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+    </svg>
+  </div>
+  <h3 class="text-lg font-semibold text-green-800">Solicitud enviada</h3>
+  <p class="mt-2 text-sm text-green-700">
+    Tu solicitud fue registrada con el identificador
+    <span class="font-bold">#{{ createdRequestId() }}</span>.
+  </p>
+  <p class="mt-1 text-sm text-green-600">El profesional revisará tu solicitud pronto.</p>
+  <button
+    type="button"
+    (click)="resetForm()"
+    class="mt-4 min-h-[44px] min-w-[44px] rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
+  >
+    Enviar otra solicitud
+  </button>
+</div>
+
+<!-- Error View (404 / unexpected) -->
+<div *ngIf="state() === 'error'" class="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
+  <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+    </svg>
+  </div>
+  <h3 class="text-lg font-semibold text-red-800">Error</h3>
+  <p class="mt-2 text-sm text-red-700">{{ serverErrorMessage() }}</p>
+  <button
+    type="button"
+    (click)="resetForm()"
+    class="mt-4 min-h-[44px] min-w-[44px] rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+  >
+    Intentar nuevamente
+  </button>
+</div>
+
+<!-- Form View -->
+<form
+  *ngIf="state() === 'form' || state() === 'submitting'"
+  [formGroup]="requestForm"
+  (ngSubmit)="onSubmit()"
+  class="space-y-4"
+>
+  <!-- Name -->
+  <div>
+    <label for="sr-name" class="block text-sm font-medium text-gray-700">
+      Nombre <span class="text-red-500">*</span>
+    </label>
+    <input
+      id="sr-name"
+      type="text"
+      formControlName="name"
+      class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      [class.border-red-500]="hasError('name', 'required') || hasError('name', 'maxlength') || hasError('name', 'serverError')"
+      placeholder="Tu nombre completo"
+    />
+    <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-red-600">
+      El nombre es obligatorio.
+    </p>
+    <p *ngIf="hasError('name', 'maxlength')" class="mt-1 text-xs text-red-600">
+      El nombre no puede exceder 150 caracteres.
+    </p>
+    <p *ngIf="hasError('name', 'serverError')" class="mt-1 text-xs text-red-600">
+      {{ requestForm.get('name')?.getError('serverError') }}
+    </p>
+  </div>
+
+  <!-- Email -->
+  <div>
+    <label for="sr-email" class="block text-sm font-medium text-gray-700">
+      Correo electrónico <span class="text-red-500">*</span>
+    </label>
+    <input
+      id="sr-email"
+      type="email"
+      formControlName="email"
+      class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      [class.border-red-500]="hasError('email', 'required') || hasError('email', 'email') || hasError('email', 'serverError')"
+      placeholder="correo@ejemplo.com"
+    />
+    <p *ngIf="hasError('email', 'required')" class="mt-1 text-xs text-red-600">
+      El correo electrónico es obligatorio.
+    </p>
+    <p *ngIf="hasError('email', 'email')" class="mt-1 text-xs text-red-600">
+      El formato del correo electrónico no es válido.
+    </p>
+    <p *ngIf="hasError('email', 'serverError')" class="mt-1 text-xs text-red-600">
+      {{ requestForm.get('email')?.getError('serverError') }}
+    </p>
+  </div>
+
+  <!-- Phone -->
+  <div>
+    <label for="sr-phone" class="block text-sm font-medium text-gray-700">
+      Teléfono
+    </label>
+    <input
+      id="sr-phone"
+      type="tel"
+      formControlName="phone"
+      class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      placeholder="(opcional)"
+    />
+  </div>
+
+  <!-- Subject -->
+  <div>
+    <label for="sr-subject" class="block text-sm font-medium text-gray-700">
+      Asunto <span class="text-red-500">*</span>
+    </label>
+    <input
+      id="sr-subject"
+      type="text"
+      formControlName="subject"
+      class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      [class.border-red-500]="hasError('subject', 'required') || hasError('subject', 'maxlength') || hasError('subject', 'serverError')"
+      placeholder="Breve descripción del servicio que necesitas"
+    />
+    <p *ngIf="hasError('subject', 'required')" class="mt-1 text-xs text-red-600">
+      El asunto es obligatorio.
+    </p>
+    <p *ngIf="hasError('subject', 'maxlength')" class="mt-1 text-xs text-red-600">
+      El asunto no puede exceder 200 caracteres.
+    </p>
+    <p *ngIf="hasError('subject', 'serverError')" class="mt-1 text-xs text-red-600">
+      {{ requestForm.get('subject')?.getError('serverError') }}
+    </p>
+  </div>
+
+  <!-- Description -->
+  <div>
+    <label for="sr-description" class="block text-sm font-medium text-gray-700">
+      Descripción <span class="text-red-500">*</span>
+    </label>
+    <textarea
+      id="sr-description"
+      formControlName="description"
+      rows="4"
+      class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      [class.border-red-500]="hasError('description', 'required') || hasError('description', 'maxlength') || hasError('description', 'serverError')"
+      placeholder="Describe en detalle el servicio que necesitas..."
+    ></textarea>
+    <p *ngIf="hasError('description', 'required')" class="mt-1 text-xs text-red-600">
+      La descripción es obligatoria.
+    </p>
+    <p *ngIf="hasError('description', 'maxlength')" class="mt-1 text-xs text-red-600">
+      La descripción no puede exceder 2000 caracteres.
+    </p>
+    <p *ngIf="hasError('description', 'serverError')" class="mt-1 text-xs text-red-600">
+      {{ requestForm.get('description')?.getError('serverError') }}
+    </p>
+  </div>
+
+  <!-- Desired Date -->
+  <div>
+    <label for="sr-desiredDate" class="block text-sm font-medium text-gray-700">
+      Fecha deseada
+    </label>
+    <input
+      id="sr-desiredDate"
+      type="date"
+      formControlName="desiredDate"
+      class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+    />
+  </div>
+
+  <!-- Submit Button -->
+  <div class="pt-2">
+    <button
+      type="submit"
+      [disabled]="isSubmitting || requestForm.invalid"
+      class="min-h-[44px] min-w-[44px] w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      <span *ngIf="!isSubmitting">Enviar solicitud</span>
+      <span *ngIf="isSubmitting" class="inline-flex items-center gap-2">
+        <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Enviando...
+      </span>
+    </button>
+  </div>
+</form>

@@ -3,6 +3,7 @@ package py.com.servipy.shared.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -50,6 +51,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers("/api/v1/auth/register/**").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                // Endpoints públicos de catálogo
+                .requestMatchers(HttpMethod.GET, "/api/v1/professionals/**").permitAll()
+                .requestMatchers("/api/v1/professionals/*/service-requests/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
                 // Endpoints de admin
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 // Todo lo demás requiere autenticación

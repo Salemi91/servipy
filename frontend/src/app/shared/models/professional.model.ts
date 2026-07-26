@@ -1,32 +1,32 @@
-/**
- * Interfaces para el onboarding y perfil del profesional.
- * Alineadas con el modelo de dominio (docs/DOMAIN_MODEL.md).
- */
-
-export interface ProfessionalProfileForm {
-  phone: string;
-  whatsapp: string;
-  city: string;
+export interface ProfessionalSummary {
+  id: number;
+  name: string;
+  professionalTitle: string;
+  categoryName: string;
   description: string;
+  cityName: string;
+  referencePrice: number;
+  availability: string;
   photoUrl: string | null;
 }
 
-export interface OfferedServiceForm {
-  categoryId: number | null;
-  name: string;
-  description: string;
-  price: number | null;
-  currency: string; // siempre "PYG"
-}
-
-export interface CategoryOption {
+export interface ProfessionalDetail {
   id: number;
   name: string;
-  icon: string;
+  photoUrl: string | null;
+  phone: string;
+  whatsapp: string | null;
   description: string;
+  cityName: string;
+  availability: string;
+  services: OfferedServiceItem[];
 }
 
-export interface CityOption {
+export interface OfferedServiceItem {
   id: number;
   name: string;
+  description: string;
+  price: number;
+  currency: string;
+  categoryName: string;
 }
