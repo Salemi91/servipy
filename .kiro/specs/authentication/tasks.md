@@ -23,13 +23,13 @@ Plan de implementación para la infraestructura completa de autenticación y aut
     - Modificar `AuthController.java` → usar `py.com.servipy.user.domain.User`
     - _Requisitos: 9.1, 9.2, 9.3_
 
-  - [ ] 1.3 Eliminar clases duplicadas del paquete auth.domain
+  - [x] 1.3 Eliminar clases duplicadas del paquete auth.domain
     - Eliminar `py.com.servipy.auth.domain.User.java`
     - Eliminar `py.com.servipy.auth.domain.Role.java`
     - Verificar que el proyecto compila sin errores
     - _Requisitos: 9.2_
 
-  - [ ] 1.4 Agregar configuración CORS en SecurityConfig
+  - [x] 1.4 Agregar configuración CORS en SecurityConfig
     - Agregar property `app.cors.allowed-origin` configurable por variable de entorno
     - Crear bean `CorsConfigurationSource` con métodos GET, POST, PUT, DELETE, OPTIONS y headers Authorization, Content-Type
     - Agregar `.cors(Customizer.withDefaults())` al SecurityFilterChain

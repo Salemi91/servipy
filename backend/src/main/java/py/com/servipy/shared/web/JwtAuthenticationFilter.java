@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import py.com.servipy.auth.application.JwtService;
-import py.com.servipy.auth.domain.User;
+import py.com.servipy.user.domain.User;
 import py.com.servipy.auth.infrastructure.persistence.UserRepository;
 import py.com.servipy.shared.exception.ErrorResponse;
 
