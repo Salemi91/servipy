@@ -7,14 +7,14 @@ Plan de implementación para la infraestructura completa de autenticación y aut
 ## Tareas
 
 - [ ] 1. Consolidación de entidad User y configuración backend
-  - [ ] 1.1 Mejorar la entidad canónica `py.com.servipy.user.domain.User`
+  - [x] 1.1 Mejorar la entidad canónica `py.com.servipy.user.domain.User`
     - Agregar constructor con argumentos `User(String name, String email, String passwordHash, Role role)`
     - Agregar callbacks `@PrePersist` / `@PreUpdate` con `Instant.now()`
     - Agregar `equals`/`hashCode` basado en id
     - Mantener `Instant` para timestamps y `name` length=150
     - _Requisitos: 9.1_
 
-  - [ ] 1.2 Actualizar imports en el módulo auth para usar la entidad canónica
+  - [x] 1.2 Actualizar imports en el módulo auth para usar la entidad canónica
     - Modificar `AuthService.java` → usar `py.com.servipy.user.domain.User` y `Role`
     - Modificar `JwtService.java` → usar `py.com.servipy.user.domain.User`
     - Modificar `UserRepository.java` → usar `py.com.servipy.user.domain.User`

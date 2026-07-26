@@ -1,7 +1,7 @@
 package py.com.servipy.auth.infrastructure.web;
 
-import py.com.servipy.auth.domain.Role;
-import py.com.servipy.auth.domain.User;
+import py.com.servipy.user.domain.Role;
+import py.com.servipy.user.domain.User;
 
 /**
  * DTO de respuesta con datos públicos del usuario.

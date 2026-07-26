@@ -1,7 +1,7 @@
 package py.com.servipy.auth.infrastructure.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import py.com.servipy.auth.domain.User;
+import py.com.servipy.user.domain.User;
 
 import java.util.Optional;
 

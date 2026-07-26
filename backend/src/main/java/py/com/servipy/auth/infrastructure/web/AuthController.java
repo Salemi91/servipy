@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import py.com.servipy.auth.application.AuthService;
-import py.com.servipy.auth.domain.User;
+import py.com.servipy.user.domain.User;
 
 /**
  * Controller REST para endpoints de autenticación.
