@@ -181,7 +181,7 @@ Plan de implementación para la infraestructura completa de autenticación y aut
     - _Requisitos: 15.1, 15.2, 15.3, 15.4, 15.5, 15.7_
 
 - [ ] 10. Rutas y wiring del frontend
-  - [ ] 10.1 Actualizar rutas en `app.routes.ts` con guards
+  - [x] 10.1 Actualizar rutas en `app.routes.ts` con guards
     - Eliminar/reemplazar el placeholder de login por la nueva ruta
     - Agregar ruta `/login` apuntando a `LoginComponent`
     - Agregar ruta `/register` apuntando a `RegisterComponent`
@@ -190,7 +190,7 @@ Plan de implementación para la infraestructura completa de autenticación y aut
     - Proteger rutas de `/admin/**` con `authGuard` y `roleGuard` (roles: ['ADMIN'])
     - _Requisitos: 13.1, 13.2, 13.3, 13.4, 14.3, 14.4, 14.5_
 
-  - [ ] 10.2 Integrar restauración de sesión en inicialización de la app
+  - [x] 10.2 Integrar restauración de sesión en inicialización de la app
     - Llamar `AuthService.restoreSession()` en el arranque de la aplicación (APP_INITIALIZER o constructor del AppComponent)
     - _Requisitos: 16.3_
 
