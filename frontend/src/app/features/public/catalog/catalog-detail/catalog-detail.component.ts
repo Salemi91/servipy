@@ -6,13 +6,14 @@ import { CatalogService } from '../services/catalog.service';
 import { ProfessionalDetail } from '../../../../shared/models/professional.model';
 import { ErrorStateComponent } from '../components/error-state/error-state.component';
 import { LoadingStateComponent } from '../components/loading-state/loading-state.component';
+import { ServiceRequestFormComponent } from './components/service-request-form/service-request-form.component';
 
 type DetailState = 'loading' | 'loaded' | 'not-found' | 'error';
 
 @Component({
   selector: 'app-catalog-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, ErrorStateComponent, LoadingStateComponent],
+  imports: [CommonModule, RouterLink, ErrorStateComponent, LoadingStateComponent, ServiceRequestFormComponent],
   templateUrl: './catalog-detail.component.html',
 })
 export class CatalogDetailComponent implements OnInit {
@@ -21,7 +22,7 @@ export class CatalogDetailComponent implements OnInit {
 
   state = signal<DetailState>('loading');
   professional = signal<ProfessionalDetail | null>(null);
-  private professionalId = 0;
+  professionalId = 0;
 
   constructor(catalogService: CatalogService, route: ActivatedRoute) {
     this.catalogService = catalogService;
