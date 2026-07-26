@@ -45,14 +45,14 @@ Plan de implementación para la infraestructura completa de autenticación y aut
   - Asegurar que todos los tests pasan y el proyecto compila correctamente tras la consolidación. Consultar al usuario si surgen dudas.
 
 - [ ] 3. Modelos e interfaces TypeScript para autenticación
-  - [ ] 3.1 Crear interfaces de modelos de autenticación en el frontend
+  - [x] 3.1 Crear interfaces de modelos de autenticación en el frontend
     - Crear archivo `src/app/shared/models/auth.model.ts`
     - Definir interfaces: `LoginRequest`, `RegisterRequest`, `AuthResponse`, `UserResponse`
     - Exportar desde el barrel del módulo shared si existe
     - _Requisitos: 11.1, 11.2, 14.1, 15.1_
 
 - [ ] 4. Servicio de autenticación frontend
-  - [ ] 4.1 Implementar `AuthService` en `src/app/core/auth/auth.service.ts`
+  - [x] 4.1 Implementar `AuthService` en `src/app/core/auth/auth.service.ts`
     - Crear servicio con `providedIn: 'root'`
     - Implementar signal `currentUser` de tipo `WritableSignal<UserResponse | null>`
     - Implementar `login(email, password): Observable<AuthResponse>` que invoque POST `/api/v1/auth/login` y almacene token + actualice signal
@@ -80,14 +80,14 @@ Plan de implementación para la infraestructura completa de autenticación y aut
     - **Valida: Requisitos 16.1, 16.2**
 
 - [ ] 5. Interceptor JWT frontend
-  - [ ] 5.1 Implementar `jwtInterceptor` en `src/app/core/http/jwt.interceptor.ts`
+  - [x] 5.1 Implementar `jwtInterceptor` en `src/app/core/http/jwt.interceptor.ts`
     - Crear interceptor funcional (`HttpInterceptorFn`)
     - Si hay token en localStorage, clonar request con header `Authorization: Bearer {token}`
     - Si la respuesta es HTTP 401, ejecutar logout y redirigir a `/login`
     - Si no hay token, enviar request sin modificar
     - _Requisitos: 12.1, 12.2, 12.3_
 
-  - [ ] 5.2 Registrar el interceptor en la configuración de la app
+  - [x] 5.2 Registrar el interceptor en la configuración de la app
     - Agregar `jwtInterceptor` a `provideHttpClient(withInterceptors([...]))` en `app.config.ts`
     - Asegurar que se agrega junto al `errorInterceptor` existente
     - _Requisitos: 12.1_
@@ -104,13 +104,13 @@ Plan de implementación para la infraestructura completa de autenticación y aut
     - **Valida: Requisitos 12.1, 12.3**
 
 - [ ] 6. Guards de navegación
-  - [ ] 6.1 Implementar `authGuard` en `src/app/core/guards/auth.guard.ts`
+  - [x] 6.1 Implementar `authGuard` en `src/app/core/guards/auth.guard.ts`
     - Crear guard funcional (`CanActivateFn`)
     - Si `isAuthenticated()` es true → retornar true
     - Si no → redirigir a `/login`, retornar false
     - _Requisitos: 13.1, 13.2_
 
-  - [ ] 6.2 Implementar `roleGuard` en `src/app/core/guards/role.guard.ts`
+  - [x] 6.2 Implementar `roleGuard` en `src/app/core/guards/role.guard.ts`
     - Crear guard funcional (`CanActivateFn`)
     - Leer roles permitidos de `route.data['roles']`
     - Si `getUserRole()` está en la lista → retornar true
@@ -132,7 +132,7 @@ Plan de implementación para la infraestructura completa de autenticación y aut
   - Asegurar que todos los tests pasan. Consultar al usuario si surgen dudas.
 
 - [ ] 8. Página de Login
-  - [ ] 8.1 Crear componente `LoginComponent` en `src/app/features/authentication/login/`
+  - [x] 8.1 Crear componente `LoginComponent` en `src/app/features/authentication/login/`
     - Componente standalone con formulario reactivo (ReactiveFormsModule)
     - Campos: email (required, email format) y password (required)
     - Botón submit deshabilitado durante procesamiento con indicador de carga
@@ -140,7 +140,7 @@ Plan de implementación para la infraestructura completa de autenticación y aut
     - Labels asociados a inputs, navegable por teclado
     - _Requisitos: 14.1, 14.7, 14.9_
 
-  - [ ] 8.2 Implementar lógica de submit y manejo de errores en LoginComponent
+  - [x] 8.2 Implementar lógica de submit y manejo de errores en LoginComponent
     - Al enviar, invocar `AuthService.login(email, password)`
     - Login exitoso: redirigir según rol (CLIENT → `/client`, PROFESSIONAL → `/professional`, ADMIN → `/admin`)
     - Login fallido: mostrar mensaje de error genérico visible
