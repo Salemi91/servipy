@@ -1,0 +1,26 @@
+<div class="flex flex-col items-center py-8 text-center">
+  <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+    <svg
+      class="h-6 w-6 text-green-600"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M5 13l4 4L19 7"
+      />
+    </svg>
+  </div>
+  <h3 class="text-lg font-semibold text-gray-900">Solicitud enviada</h3>
+  <p class="mt-2 text-sm text-gray-600">
+    Tu solicitud ha sido registrada con el número
+    <span class="font-medium text-gray-900">#{{ requestId() }}</span>.
+  </p>
+  <p class="mt-1 text-sm text-gray-500">
+    El profesional revisará tu solicitud y te contactará pronto.
+  </p>
+</div>

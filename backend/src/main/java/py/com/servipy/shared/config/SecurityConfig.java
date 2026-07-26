@@ -23,10 +23,14 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // TODO: Proteger con JWT cuando se implemente autenticación completa
+            // MVP: Los endpoints de service-requests son públicos temporalmente.
+            // En la iteración de autenticación se restringirán con roles apropiados.
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/health").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/professionals/**").permitAll()
+                .requestMatchers("/api/v1/professionals/*/service-requests/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
                 .anyRequest().authenticated()
             );

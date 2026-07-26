@@ -1,0 +1,122 @@
+<div class="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
+  <h1 class="text-xl font-bold text-gray-900 mb-4">Solicitudes recibidas</h1>
+
+  <!-- Filter -->
+  <div class="mb-4">
+    <label for="statusFilter" class="sr-only">Filtrar por estado</label>
+    <select
+      id="statusFilter"
+      [value]="selectedStatus()"
+      (change)="onFilterChange($event)"
+      class="min-h-[44px] rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+    >
+      <option value="">Todos</option>
+      <option value="PENDING">Pendientes</option>
+      <option value="ACCEPTED">Aceptadas</option>
+      <option value="REJECTED">Rechazadas</option>
+    </select>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="state() === 'loading'" class="flex justify-center py-12">
+    <div class="text-sm text-gray-500">Cargando solicitudes...</div>
+  </div>
+
+  <!-- Error -->
+  <div
+    *ngIf="state() === 'error'"
+    class="flex flex-col items-center py-12 text-center"
+  >
+    <p class="text-sm text-red-600 mb-4">
+      Error al cargar las solicitudes.
+    </p>
+    <button
+      (click)="onRetry()"
+      class="min-h-[44px] min-w-[44px] rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+    >
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Empty -->
+  <div
+    *ngIf="state() === 'loaded' && requests().length === 0"
+    class="flex flex-col items-center py-12 text-center"
+  >
+    <p class="text-sm text-gray-500">No hay solicitudes.</p>
+  </div>
+
+  <!-- Table (desktop) -->
+  <div
+    *ngIf="state() === 'loaded' && requests().length > 0"
+    class="hidden sm:block overflow-x-auto rounded-lg border border-gray-200"
+  >
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Cliente
+          </th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Asunto
+          </th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Estado
+          </th>
+          <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Fecha
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr
+          *ngFor="let req of requests()"
+          [routerLink]="[req.id.toString()]"
+          class="hover:bg-gray-50 cursor-pointer"
+        >
+          <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+            {{ req.clientName }}
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-700">
+            {{ req.subject }}
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <span
+              class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium"
+              [ngClass]="getStatusClasses(req.status)"
+            >
+              {{ getStatusLabel(req.status) }}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+            {{ req.createdAt | date : 'dd/MM/yyyy' }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cards (mobile) -->
+  <div
+    *ngIf="state() === 'loaded' && requests().length > 0"
+    class="sm:hidden space-y-3"
+  >
+    <a
+      *ngFor="let req of requests()"
+      [routerLink]="[req.id.toString()]"
+      class="block rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+    >
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-sm font-medium text-gray-900">{{ req.clientName }}</span>
+        <span
+          class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium"
+          [ngClass]="getStatusClasses(req.status)"
+        >
+          {{ getStatusLabel(req.status) }}
+        </span>
+      </div>
+      <p class="text-sm text-gray-700 truncate">{{ req.subject }}</p>
+      <p class="text-xs text-gray-500 mt-1">{{ req.createdAt | date : 'dd/MM/yyyy' }}</p>
+    </a>
+  </div>
+</div>
