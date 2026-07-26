@@ -156,7 +156,7 @@ Plan de implementación para la infraestructura completa de autenticación y aut
     - _Requisitos: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7, 14.9_
 
 - [ ] 9. Página de Registro
-  - [ ] 9.1 Crear componente `RegisterComponent` en `src/app/features/authentication/register/`
+  - [x] 9.1 Crear componente `RegisterComponent` en `src/app/features/authentication/register/`
     - Componente standalone con formulario reactivo
     - Campos: name (required, min 2 chars), email (required, email format), password (required, min 8 chars), selector tipo de cuenta (CLIENT/PROFESSIONAL)
     - Botón submit deshabilitado durante procesamiento con indicador de carga
@@ -164,7 +164,7 @@ Plan de implementación para la infraestructura completa de autenticación y aut
     - Mensajes de error con `role="alert"`, labels asociados, navegable por teclado
     - _Requisitos: 15.1, 15.6, 15.7, 15.9_
 
-  - [ ] 9.2 Implementar lógica de submit y manejo de errores en RegisterComponent
+  - [x] 9.2 Implementar lógica de submit y manejo de errores en RegisterComponent
     - Al enviar, invocar `AuthService.register(name, email, password, roleType)`
     - Registro exitoso: redirigir según rol (mismas reglas que login)
     - Error email duplicado: mostrar mensaje "el email ya está registrado"
