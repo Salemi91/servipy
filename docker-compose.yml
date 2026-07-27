@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-  mysql:
+  mysql_db:
     image: mysql:8.0
     container_name: servipy-mysql
     restart: unless-stopped
@@ -21,6 +19,59 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - servipy-net
+
+  spring_backend:
+    image: ${DOCKER_REGISTRY:-}servipy-backend:${TAG:-latest}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: servipy-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      DB_URL: jdbc:mysql://mysql_db:3306/${MYSQL_DATABASE}
+      DB_USERNAME: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-30}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost}
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - servipy-net
+
+  angular_frontend:
+    image: ${DOCKER_REGISTRY:-}servipy-frontend:${TAG:-latest}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: servipy-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      spring_backend:
+        condition: service_healthy
+    networks:
+      - servipy-net
 
 volumes:
   mysql_data:
+  uploads_data:
+
+networks:
+  servipy-net:
+    driver: bridge

@@ -2,7 +2,7 @@ package py.com.servipy.client.infrastructure.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import py.com.servipy.client.application.ClientRequestService;
 import py.com.servipy.client.application.dto.ServiceRequestPageResponse;
+import py.com.servipy.user.domain.User;
 
 /**
  * Controlador REST para el historial de solicitudes del cliente.
@@ -32,7 +33,7 @@ public class ClientRequestController {
      */
     @GetMapping
     public ResponseEntity<ServiceRequestPageResponse> getRequests(
-            Authentication authentication,
+            @AuthenticationPrincipal User user,
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -44,8 +45,7 @@ public class ClientRequestController {
             throw new IllegalArgumentException("El parámetro 'size' debe estar entre 1 y 100");
         }
 
-        Long userId = Long.parseLong(authentication.getName());
-        ServiceRequestPageResponse response = clientRequestService.getRequests(userId, status, page, size);
+        ServiceRequestPageResponse response = clientRequestService.getRequests(user.getId(), status, page, size);
         return ResponseEntity.ok(response);
     }
 }

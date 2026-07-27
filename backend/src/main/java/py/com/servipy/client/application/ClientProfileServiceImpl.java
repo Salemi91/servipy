@@ -10,11 +10,10 @@ import py.com.servipy.client.application.dto.ClientProfileUpdateRequest;
 import py.com.servipy.client.application.dto.PasswordChangeRequest;
 import py.com.servipy.client.application.dto.PhotoUploadResponse;
 import py.com.servipy.client.application.exception.InvalidCurrentPasswordException;
-import py.com.servipy.client.infrastructure.persistence.UserRepository;
+import py.com.servipy.client.infrastructure.persistence.ClientUserRepository;
 import py.com.servipy.shared.exception.ResourceNotFoundException;
 import py.com.servipy.user.domain.User;
 
-import java.time.Instant;
 
 /**
  * Implementación del servicio de perfil del cliente.
@@ -23,11 +22,11 @@ import java.time.Instant;
 @Transactional(readOnly = true)
 public class ClientProfileServiceImpl implements ClientProfileService {
 
-    private final UserRepository userRepository;
+    private final ClientUserRepository userRepository;
     private final PhotoStorageService photoStorageService;
     private final PasswordEncoder passwordEncoder;
 
-    public ClientProfileServiceImpl(UserRepository userRepository,
+    public ClientProfileServiceImpl(ClientUserRepository userRepository,
                                     PhotoStorageService photoStorageService,
                                     PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -51,7 +50,6 @@ public class ClientProfileServiceImpl implements ClientProfileService {
 
         user.setName(request.name());
         user.setPhone(request.phone());
-        user.setUpdatedAt(Instant.now());
 
         return toResponse(user);
     }
@@ -65,7 +63,6 @@ public class ClientProfileServiceImpl implements ClientProfileService {
         String photoUrl = photoStorageService.store(userId, file);
 
         user.setPhotoUrl(photoUrl);
-        user.setUpdatedAt(Instant.now());
 
         return new PhotoUploadResponse(photoUrl);
     }
@@ -85,7 +82,6 @@ public class ClientProfileServiceImpl implements ClientProfileService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
-        user.setUpdatedAt(Instant.now());
     }
 
     private ClientProfileResponse toResponse(User user) {

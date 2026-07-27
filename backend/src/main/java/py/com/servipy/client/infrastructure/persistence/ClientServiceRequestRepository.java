@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import py.com.servipy.client.domain.ServiceRequest;
 
-public interface ServiceRequestRepository extends JpaRepository<ServiceRequest, Long>,
+public interface ClientServiceRequestRepository extends JpaRepository<ServiceRequest, Long>,
         JpaSpecificationExecutor<ServiceRequest> {
 }

@@ -13,7 +13,7 @@ type PageState = 'loading' | 'loaded' | 'error';
   standalone: true,
   imports: [CommonModule, DatePipe, RequestStatusBadgeComponent],
   template: `
-    <div class="max-w-4xl mx-auto py-6 px-4">
+    <div>
       <h1 class="text-2xl font-semibold text-gray-800 mb-6">Mis Solicitudes</h1>
 
       <!-- Filter row -->
@@ -28,8 +28,6 @@ type PageState = 'loading' | 'loaded' | 'error';
           <option value="PENDING">Pendiente</option>
           <option value="ACCEPTED">Aceptada</option>
           <option value="REJECTED">Rechazada</option>
-          <option value="COMPLETED">Completada</option>
-          <option value="CANCELLED">Cancelada</option>
         </select>
 
         @if (state() === 'loaded' && requests().length > 0) {

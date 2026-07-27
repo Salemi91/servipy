@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +21,7 @@ import py.com.servipy.client.application.dto.ClientProfileUpdateRequest;
 import py.com.servipy.client.application.dto.PasswordChangeRequest;
 import py.com.servipy.client.application.dto.PhotoUploadResponse;
 import py.com.servipy.client.application.exception.FileTooLargeException;
+import py.com.servipy.user.domain.User;
 
 /**
  * Controlador REST para la gestión del perfil del cliente.
@@ -44,9 +45,8 @@ public class ClientProfileController {
      * Retorna el perfil del cliente autenticado.
      */
     @GetMapping
-    public ResponseEntity<ClientProfileResponse> getProfile(Authentication authentication) {
-        Long userId = Long.parseLong(authentication.getName());
-        ClientProfileResponse profile = clientProfileService.getProfile(userId);
+    public ResponseEntity<ClientProfileResponse> getProfile(@AuthenticationPrincipal User user) {
+        ClientProfileResponse profile = clientProfileService.getProfile(user.getId());
         return ResponseEntity.ok(profile);
     }
 
@@ -56,10 +56,9 @@ public class ClientProfileController {
      */
     @PutMapping
     public ResponseEntity<ClientProfileResponse> updateProfile(
-            Authentication authentication,
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody ClientProfileUpdateRequest request) {
-        Long userId = Long.parseLong(authentication.getName());
-        ClientProfileResponse profile = clientProfileService.updateProfile(userId, request);
+        ClientProfileResponse profile = clientProfileService.updateProfile(user.getId(), request);
         return ResponseEntity.ok(profile);
     }
 
@@ -69,10 +68,8 @@ public class ClientProfileController {
      */
     @PutMapping("/photo")
     public ResponseEntity<PhotoUploadResponse> uploadPhoto(
-            Authentication authentication,
+            @AuthenticationPrincipal User user,
             @RequestParam("file") MultipartFile file) {
-        Long userId = Long.parseLong(authentication.getName());
-
         if (file.isEmpty() || file.getSize() == 0) {
             throw new IllegalArgumentException("El archivo está vacío");
         }
@@ -81,7 +78,7 @@ public class ClientProfileController {
             throw new FileTooLargeException("El tamaño máximo permitido es 5 MB");
         }
 
-        PhotoUploadResponse response = clientProfileService.uploadPhoto(userId, file);
+        PhotoUploadResponse response = clientProfileService.uploadPhoto(user.getId(), file);
         return ResponseEntity.ok(response);
     }
 
@@ -91,10 +88,9 @@ public class ClientProfileController {
      */
     @PutMapping("/password")
     public ResponseEntity<Map<String, String>> changePassword(
-            Authentication authentication,
+            @AuthenticationPrincipal User user,
             @Valid @RequestBody PasswordChangeRequest request) {
-        Long userId = Long.parseLong(authentication.getName());
-        clientProfileService.changePassword(userId, request);
+        clientProfileService.changePassword(user.getId(), request);
         return ResponseEntity.ok(Map.of("message", "Contraseña actualizada exitosamente"));
     }
 }
