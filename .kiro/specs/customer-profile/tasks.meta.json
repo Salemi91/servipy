@@ -1,0 +1,552 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Crear migración Flyway `V3__add_client_profile_fields.sql`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094827761
+      },
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094835860
+      },
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785095229623
+      }
+    ],
+    "1.2 Actualizar entidad `User` y crear entidad `ServiceRequest`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094827879
+      },
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785095236478
+      },
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785095366566
+      }
+    ],
+    "1.3 Crear repositorios para el slice `client`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094827977
+      },
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785095387364
+      },
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785111742935
+      }
+    ],
+    "2.1 Crear DTOs y servicio de perfil del cliente": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828082
+      },
+      {
+        "executionId": "e72bcf17-2477-47d8-a087-fdecc4ea744c",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785111790696
+      },
+      {
+        "executionId": "e72bcf17-2477-47d8-a087-fdecc4ea744c",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785112139833
+      }
+    ],
+    "2.2 Crear `ClientProfileController` con endpoint GET `/api/v1/client/profile`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828170
+      },
+      {
+        "executionId": "e72bcf17-2477-47d8-a087-fdecc4ea744c",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785112144377
+      },
+      {
+        "executionId": "e72bcf17-2477-47d8-a087-fdecc4ea744c",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785112895868
+      }
+    ],
+    "3.1 Crear DTO `ClientProfileUpdateRequest` con validaciones": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828269
+      },
+      {
+        "executionId": "1b0af9c3-8a9e-44fc-ba3e-e5a3606265c9",
+        "chatSessionId": "sess_e838b269-5f71-4171-8572-7beb6281f3be",
+        "timestamp": 1785119755957
+      },
+      {
+        "executionId": "1b0af9c3-8a9e-44fc-ba3e-e5a3606265c9",
+        "chatSessionId": "sess_e838b269-5f71-4171-8572-7beb6281f3be",
+        "timestamp": 1785120048888
+      }
+    ],
+    "3.2 Implementar método `updateProfile` en `ClientProfileService`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828361
+      },
+      {
+        "executionId": "1b0af9c3-8a9e-44fc-ba3e-e5a3606265c9",
+        "chatSessionId": "sess_e838b269-5f71-4171-8572-7beb6281f3be",
+        "timestamp": 1785119756706
+      },
+      {
+        "executionId": "1b0af9c3-8a9e-44fc-ba3e-e5a3606265c9",
+        "chatSessionId": "sess_e838b269-5f71-4171-8572-7beb6281f3be",
+        "timestamp": 1785120049667
+      }
+    ],
+    "3.3 Crear endpoint PUT `/api/v1/client/profile` en el controlador": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828483
+      },
+      {
+        "executionId": "1b0af9c3-8a9e-44fc-ba3e-e5a3606265c9",
+        "chatSessionId": "sess_e838b269-5f71-4171-8572-7beb6281f3be",
+        "timestamp": 1785119757502
+      },
+      {
+        "executionId": "1b0af9c3-8a9e-44fc-ba3e-e5a3606265c9",
+        "chatSessionId": "sess_e838b269-5f71-4171-8572-7beb6281f3be",
+        "timestamp": 1785120050500
+      }
+    ],
+    "4.1 Crear `LocalPhotoStorageService` para almacenamiento de imágenes": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828580
+      },
+      {
+        "executionId": "a607322f-27b9-40af-8620-f6f29faeb3e9",
+        "chatSessionId": "sess_39006be2-5559-4b57-a704-f7189b9315e8",
+        "timestamp": 1785120187782
+      }
+    ],
+    "4.2 Crear excepciones personalizadas y handlers": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828698
+      },
+      {
+        "executionId": "a607322f-27b9-40af-8620-f6f29faeb3e9",
+        "chatSessionId": "sess_39006be2-5559-4b57-a704-f7189b9315e8",
+        "timestamp": 1785120188590
+      }
+    ],
+    "4.3 Crear endpoint PUT `/api/v1/client/profile/photo`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828810
+      },
+      {
+        "executionId": "a607322f-27b9-40af-8620-f6f29faeb3e9",
+        "chatSessionId": "sess_39006be2-5559-4b57-a704-f7189b9315e8",
+        "timestamp": 1785120189567
+      }
+    ],
+    "5. Checkpoint — Verificar que todos los tests pasan": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094828920
+      },
+      {
+        "executionId": "c8f6adc3-d763-4e95-88ff-6f9174570337",
+        "chatSessionId": "sess_39006be2-5559-4b57-a704-f7189b9315e8",
+        "timestamp": 1785120274989
+      },
+      {
+        "executionId": "c8f6adc3-d763-4e95-88ff-6f9174570337",
+        "chatSessionId": "sess_39006be2-5559-4b57-a704-f7189b9315e8",
+        "timestamp": 1785120364092
+      }
+    ],
+    "6.1 Crear DTO `PasswordChangeRequest` con validaciones": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829022
+      },
+      {
+        "executionId": "e6120aab-f2f3-4a2b-ac09-4fa258d50ea5",
+        "chatSessionId": "sess_3db08642-891b-4a87-aebb-116bcd2ecea4",
+        "timestamp": 1785120496197
+      },
+      {
+        "executionId": "e6120aab-f2f3-4a2b-ac09-4fa258d50ea5",
+        "chatSessionId": "sess_3db08642-891b-4a87-aebb-116bcd2ecea4",
+        "timestamp": 1785120649447
+      }
+    ],
+    "6.2 Implementar método `changePassword` en `ClientProfileService`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829156
+      },
+      {
+        "executionId": "e6120aab-f2f3-4a2b-ac09-4fa258d50ea5",
+        "chatSessionId": "sess_3db08642-891b-4a87-aebb-116bcd2ecea4",
+        "timestamp": 1785120500186
+      },
+      {
+        "executionId": "e6120aab-f2f3-4a2b-ac09-4fa258d50ea5",
+        "chatSessionId": "sess_3db08642-891b-4a87-aebb-116bcd2ecea4",
+        "timestamp": 1785120650174
+      }
+    ],
+    "6.3 Crear endpoint PUT `/api/v1/client/profile/password`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829302
+      },
+      {
+        "executionId": "e6120aab-f2f3-4a2b-ac09-4fa258d50ea5",
+        "chatSessionId": "sess_3db08642-891b-4a87-aebb-116bcd2ecea4",
+        "timestamp": 1785120501116
+      },
+      {
+        "executionId": "e6120aab-f2f3-4a2b-ac09-4fa258d50ea5",
+        "chatSessionId": "sess_3db08642-891b-4a87-aebb-116bcd2ecea4",
+        "timestamp": 1785120650968
+      }
+    ],
+    "7.1 Crear DTOs y servicio de historial de solicitudes": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829433
+      },
+      {
+        "executionId": "3a5772f4-cb30-4d18-af7a-1f4f5c793d02",
+        "chatSessionId": "sess_e7512d2e-887c-4831-8e79-2ea065ac7625",
+        "timestamp": 1785120704954
+      },
+      {
+        "executionId": "3a5772f4-cb30-4d18-af7a-1f4f5c793d02",
+        "chatSessionId": "sess_e7512d2e-887c-4831-8e79-2ea065ac7625",
+        "timestamp": 1785120800699
+      }
+    ],
+    "7.2 Crear `ClientRequestController` con endpoint GET `/api/v1/client/requests`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829557
+      },
+      {
+        "executionId": "3a5772f4-cb30-4d18-af7a-1f4f5c793d02",
+        "chatSessionId": "sess_e7512d2e-887c-4831-8e79-2ea065ac7625",
+        "timestamp": 1785120805274
+      },
+      {
+        "executionId": "3a5772f4-cb30-4d18-af7a-1f4f5c793d02",
+        "chatSessionId": "sess_e7512d2e-887c-4831-8e79-2ea065ac7625",
+        "timestamp": 1785120844122
+      }
+    ],
+    "8. Checkpoint — Verificar backend completo": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829678
+      },
+      {
+        "executionId": "cdbbe470-bc59-4f90-aa68-bfefcea1e142",
+        "chatSessionId": "sess_e7512d2e-887c-4831-8e79-2ea065ac7625",
+        "timestamp": 1785120990583
+      },
+      {
+        "executionId": "cdbbe470-bc59-4f90-aa68-bfefcea1e142",
+        "chatSessionId": "sess_e7512d2e-887c-4831-8e79-2ea065ac7625",
+        "timestamp": 1785121059234
+      }
+    ],
+    "9.1 Crear modelos TypeScript para el feature client": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829779
+      },
+      {
+        "executionId": "09b0f470-8e4e-4bed-898e-f154e427fe9b",
+        "chatSessionId": "sess_027038cf-0ef0-4803-92de-6f2162053967",
+        "timestamp": 1785121137990
+      },
+      {
+        "executionId": "09b0f470-8e4e-4bed-898e-f154e427fe9b",
+        "chatSessionId": "sess_027038cf-0ef0-4803-92de-6f2162053967",
+        "timestamp": 1785121144778
+      }
+    ],
+    "9.2 Crear `ClientProfileService` en el frontend": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829897
+      },
+      {
+        "executionId": "09b0f470-8e4e-4bed-898e-f154e427fe9b",
+        "chatSessionId": "sess_027038cf-0ef0-4803-92de-6f2162053967",
+        "timestamp": 1785121139069
+      },
+      {
+        "executionId": "09b0f470-8e4e-4bed-898e-f154e427fe9b",
+        "chatSessionId": "sess_027038cf-0ef0-4803-92de-6f2162053967",
+        "timestamp": 1785121145548
+      }
+    ],
+    "9.3 Crear `ClientRequestService` en el frontend": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094829994
+      },
+      {
+        "executionId": "09b0f470-8e4e-4bed-898e-f154e427fe9b",
+        "chatSessionId": "sess_027038cf-0ef0-4803-92de-6f2162053967",
+        "timestamp": 1785121139816
+      },
+      {
+        "executionId": "09b0f470-8e4e-4bed-898e-f154e427fe9b",
+        "chatSessionId": "sess_027038cf-0ef0-4803-92de-6f2162053967",
+        "timestamp": 1785121146318
+      }
+    ],
+    "10.1 Crear `ProfilePageComponent` como contenedor principal": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830086
+      },
+      {
+        "executionId": "be8ae934-ee7e-4b7c-be6c-91624332c098",
+        "chatSessionId": "sess_a240cd65-ca9d-4b43-b8a7-397ae17d53e6",
+        "timestamp": 1785121246370
+      }
+    ],
+    "10.2 Crear `ProfileEditFormComponent` con Reactive Forms": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830185
+      },
+      {
+        "executionId": "be8ae934-ee7e-4b7c-be6c-91624332c098",
+        "chatSessionId": "sess_a240cd65-ca9d-4b43-b8a7-397ae17d53e6",
+        "timestamp": 1785121247164
+      }
+    ],
+    "10.3 Crear `PhotoUploadComponent`": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830301
+      },
+      {
+        "executionId": "be8ae934-ee7e-4b7c-be6c-91624332c098",
+        "chatSessionId": "sess_a240cd65-ca9d-4b43-b8a7-397ae17d53e6",
+        "timestamp": 1785121247913
+      }
+    ],
+    "10.4 Crear `PasswordChangeComponent` con Reactive Forms": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830399
+      },
+      {
+        "executionId": "be8ae934-ee7e-4b7c-be6c-91624332c098",
+        "chatSessionId": "sess_a240cd65-ca9d-4b43-b8a7-397ae17d53e6",
+        "timestamp": 1785121248728
+      }
+    ],
+    "11.1 Crear `RequestHistoryPageComponent` con listado paginado": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830504
+      },
+      {
+        "executionId": "5874780e-a931-4401-bdbd-39c16e89c043",
+        "chatSessionId": "sess_64f643ad-0708-4d87-8d87-9d0d7102d903",
+        "timestamp": 1785121322014
+      }
+    ],
+    "11.2 Crear `RequestStatusBadgeComponent` con colores por estado": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830599
+      },
+      {
+        "executionId": "5874780e-a931-4401-bdbd-39c16e89c043",
+        "chatSessionId": "sess_64f643ad-0708-4d87-8d87-9d0d7102d903",
+        "timestamp": 1785121326764
+      }
+    ],
+    "11.3 Implementar filtro por estado y paginación": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830724
+      },
+      {
+        "executionId": "5874780e-a931-4401-bdbd-39c16e89c043",
+        "chatSessionId": "sess_64f643ad-0708-4d87-8d87-9d0d7102d903",
+        "timestamp": 1785121330694
+      }
+    ],
+    "12.1 Actualizar `routes.ts` del feature client": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830820
+      },
+      {
+        "executionId": "b2a87291-69cd-43a6-bddb-60685e86c741",
+        "chatSessionId": "sess_480bf129-5f39-43de-b09b-d6a072a15bc0",
+        "timestamp": 1785121360438
+      },
+      {
+        "executionId": "b2a87291-69cd-43a6-bddb-60685e86c741",
+        "chatSessionId": "sess_480bf129-5f39-43de-b09b-d6a072a15bc0",
+        "timestamp": 1785121770423
+      }
+    ],
+    "12.2 Configurar timeout de 15 segundos en servicios HTTP": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094830912
+      },
+      {
+        "executionId": "b2a87291-69cd-43a6-bddb-60685e86c741",
+        "chatSessionId": "sess_480bf129-5f39-43de-b09b-d6a072a15bc0",
+        "timestamp": 1785121361238
+      },
+      {
+        "executionId": "b2a87291-69cd-43a6-bddb-60685e86c741",
+        "chatSessionId": "sess_480bf129-5f39-43de-b09b-d6a072a15bc0",
+        "timestamp": 1785121771092
+      }
+    ],
+    "13. Checkpoint final — Verificar implementación completa": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785094831030
+      },
+      {
+        "executionId": "537d2b33-287d-431b-93d6-91281e70329e",
+        "chatSessionId": "sess_480bf129-5f39-43de-b09b-d6a072a15bc0",
+        "timestamp": 1785121964201
+      },
+      {
+        "executionId": "537d2b33-287d-431b-93d6-91281e70329e",
+        "chatSessionId": "sess_480bf129-5f39-43de-b09b-d6a072a15bc0",
+        "timestamp": 1785123517960
+      }
+    ],
+    "1. Migración de base de datos y entidades de dominio": [
+      {
+        "executionId": "c505ea05-3b7c-4b54-9e21-207b98f3cbf4",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785111743018
+      }
+    ],
+    "2. Implementar endpoint de consulta de perfil": [
+      {
+        "executionId": "e72bcf17-2477-47d8-a087-fdecc4ea744c",
+        "chatSessionId": "sess_5fde36ec-3f12-4504-b40d-b308660ec294",
+        "timestamp": 1785112895971
+      }
+    ],
+    "3. Implementar endpoint de edición de datos personales": [
+      {
+        "executionId": "1b0af9c3-8a9e-44fc-ba3e-e5a3606265c9",
+        "chatSessionId": "sess_e838b269-5f71-4171-8572-7beb6281f3be",
+        "timestamp": 1785120050613
+      }
+    ],
+    "4. Implementar endpoint de cambio de foto de perfil": [
+      {
+        "executionId": "a607322f-27b9-40af-8620-f6f29faeb3e9",
+        "chatSessionId": "sess_39006be2-5559-4b57-a704-f7189b9315e8",
+        "timestamp": 1785120189707
+      }
+    ],
+    "6. Implementar endpoint de cambio de contraseña": [
+      {
+        "executionId": "e6120aab-f2f3-4a2b-ac09-4fa258d50ea5",
+        "chatSessionId": "sess_3db08642-891b-4a87-aebb-116bcd2ecea4",
+        "timestamp": 1785120651069
+      }
+    ],
+    "7. Implementar endpoint de historial de solicitudes": [
+      {
+        "executionId": "3a5772f4-cb30-4d18-af7a-1f4f5c793d02",
+        "chatSessionId": "sess_e7512d2e-887c-4831-8e79-2ea065ac7625",
+        "timestamp": 1785120844227
+      }
+    ],
+    "9. Implementar modelos y servicios del frontend": [
+      {
+        "executionId": "09b0f470-8e4e-4bed-898e-f154e427fe9b",
+        "chatSessionId": "sess_027038cf-0ef0-4803-92de-6f2162053967",
+        "timestamp": 1785121146400
+      }
+    ],
+    "10. Implementar página de perfil del cliente": [
+      {
+        "executionId": "be8ae934-ee7e-4b7c-be6c-91624332c098",
+        "chatSessionId": "sess_a240cd65-ca9d-4b43-b8a7-397ae17d53e6",
+        "timestamp": 1785121248812
+      }
+    ],
+    "11. Implementar página de historial de solicitudes": [
+      {
+        "executionId": "5874780e-a931-4401-bdbd-39c16e89c043",
+        "chatSessionId": "sess_64f643ad-0708-4d87-8d87-9d0d7102d903",
+        "timestamp": 1785121330780
+      }
+    ],
+    "12. Configurar rutas y guards del feature client": [
+      {
+        "executionId": "b2a87291-69cd-43a6-bddb-60685e86c741",
+        "chatSessionId": "sess_480bf129-5f39-43de-b09b-d6a072a15bc0",
+        "timestamp": 1785121771218
+      }
+    ]
+  }
+}
