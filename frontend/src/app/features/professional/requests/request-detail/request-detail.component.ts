@@ -9,6 +9,7 @@ import {
   ChangeStatusPayload,
 } from '../../../../shared/models/service-request.model';
 import { ErrorResponse } from '../../../../shared/models/api-response.model';
+import { ProfessionalProfileApiService } from '../../services/professional-profile.service';
 
 type DetailState = 'loading' | 'loaded' | 'not-found' | 'error';
 
@@ -21,6 +22,7 @@ type DetailState = 'loading' | 'loaded' | 'not-found' | 'error';
 export class RequestDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly serviceRequestService = inject(ServiceRequestService);
+  private readonly profileApi = inject(ProfessionalProfileApiService);
 
   state = signal<DetailState>('loading');
   request = signal<ServiceRequestDetail | null>(null);
@@ -31,11 +33,16 @@ export class RequestDetailComponent implements OnInit {
   requestId = 0;
 
   ngOnInit(): void {
-    this.professionalId = Number(
-      this.route.parent?.snapshot.paramMap.get('professionalId') ?? '0'
-    );
     this.requestId = Number(this.route.snapshot.paramMap.get('requestId') ?? '0');
-    this.loadDetail();
+    this.profileApi.getMyProfile().subscribe({
+      next: (profile) => {
+        this.professionalId = profile.id;
+        this.loadDetail();
+      },
+      error: () => {
+        this.state.set('error');
+      },
+    });
   }
 
   onAccept(): void {

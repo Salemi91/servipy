@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Repositorio de lectura para la entidad User dentro del slice client.
  */
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface ClientUserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByIdAndActiveTrue(Long id);
 }

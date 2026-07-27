@@ -10,7 +10,7 @@ import py.com.servipy.client.application.dto.ClientProfileUpdateRequest;
 import py.com.servipy.client.application.dto.PasswordChangeRequest;
 import py.com.servipy.client.application.dto.PhotoUploadResponse;
 import py.com.servipy.client.application.exception.InvalidCurrentPasswordException;
-import py.com.servipy.client.infrastructure.persistence.UserRepository;
+import py.com.servipy.client.infrastructure.persistence.ClientUserRepository;
 import py.com.servipy.shared.exception.ResourceNotFoundException;
 import py.com.servipy.user.domain.User;
 
@@ -22,11 +22,11 @@ import py.com.servipy.user.domain.User;
 @Transactional(readOnly = true)
 public class ClientProfileServiceImpl implements ClientProfileService {
 
-    private final UserRepository userRepository;
+    private final ClientUserRepository userRepository;
     private final PhotoStorageService photoStorageService;
     private final PasswordEncoder passwordEncoder;
 
-    public ClientProfileServiceImpl(UserRepository userRepository,
+    public ClientProfileServiceImpl(ClientUserRepository userRepository,
                                     PhotoStorageService photoStorageService,
                                     PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;

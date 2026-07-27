@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { ServiceRequestService } from '../services/service-request.service';
 import { ServiceRequestSummary } from '../../../../shared/models/service-request.model';
+import { ProfessionalProfileApiService } from '../../services/professional-profile.service';
 
 type ListState = 'loading' | 'loaded' | 'error';
 
@@ -14,8 +15,8 @@ type ListState = 'loading' | 'loaded' | 'error';
   templateUrl: './request-list.component.html',
 })
 export class RequestListComponent implements OnInit {
-  private readonly route = inject(ActivatedRoute);
   private readonly serviceRequestService = inject(ServiceRequestService);
+  private readonly profileApi = inject(ProfessionalProfileApiService);
 
   state = signal<ListState>('loading');
   requests = signal<ServiceRequestSummary[]>([]);
@@ -23,10 +24,15 @@ export class RequestListComponent implements OnInit {
   professionalId = 0;
 
   ngOnInit(): void {
-    this.professionalId = Number(
-      this.route.parent?.snapshot.paramMap.get('professionalId') ?? '0'
-    );
-    this.loadRequests();
+    this.profileApi.getMyProfile().subscribe({
+      next: (profile) => {
+        this.professionalId = profile.id;
+        this.loadRequests();
+      },
+      error: () => {
+        this.state.set('error');
+      },
+    });
   }
 
   onFilterChange(event: Event): void {

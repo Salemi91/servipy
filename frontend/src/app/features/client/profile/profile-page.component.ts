@@ -45,7 +45,7 @@ type ProfileState = 'loading' | 'loaded' | 'error';
 
     <!-- Loaded State -->
     @if (state() === 'loaded' && profile()) {
-      <div class="max-w-3xl mx-auto space-y-6 py-6 px-4">
+      <div class="space-y-6">
         <h1 class="text-2xl font-semibold text-gray-800">Mi Perfil</h1>
 
         <app-photo-upload

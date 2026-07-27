@@ -12,16 +12,16 @@ import py.com.servipy.client.application.dto.ServiceRequestPageResponse;
 import py.com.servipy.client.application.dto.ServiceRequestResponse;
 import py.com.servipy.client.domain.RequestStatus;
 import py.com.servipy.client.domain.ServiceRequest;
-import py.com.servipy.client.infrastructure.persistence.ServiceRequestRepository;
+import py.com.servipy.client.infrastructure.persistence.ClientServiceRequestRepository;
 import py.com.servipy.client.infrastructure.persistence.ServiceRequestSpecification;
 
 @Service
 @Transactional(readOnly = true)
 public class ClientRequestServiceImpl implements ClientRequestService {
 
-    private final ServiceRequestRepository serviceRequestRepository;
+    private final ClientServiceRequestRepository serviceRequestRepository;
 
-    public ClientRequestServiceImpl(ServiceRequestRepository serviceRequestRepository) {
+    public ClientRequestServiceImpl(ClientServiceRequestRepository serviceRequestRepository) {
         this.serviceRequestRepository = serviceRequestRepository;
     }
 
@@ -53,7 +53,7 @@ public class ClientRequestServiceImpl implements ClientRequestService {
             return RequestStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                "Valores de estado permitidos: PENDING, ACCEPTED, REJECTED, COMPLETED, CANCELLED"
+                "Valores de estado permitidos: PENDING, ACCEPTED, REJECTED"
             );
         }
     }

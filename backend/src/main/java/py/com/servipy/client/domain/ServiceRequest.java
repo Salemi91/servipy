@@ -4,48 +4,44 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
-import py.com.servipy.user.domain.User;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
+import org.hibernate.annotations.Synchronize;
 
 import java.time.Instant;
 
-@Entity
-@Table(name = "service_requests")
+/**
+ * Vista de solo lectura de las solicitudes de servicio desde la perspectiva del cliente.
+ * Usa @Subselect para evitar conflictos con la entidad principal ServiceRequest.
+ */
+@Entity(name = "ClientServiceRequest")
+@Immutable
+@Subselect("SELECT id, professional_id, client_name AS service_name, subject AS professional_name, status, created_at, updated_at FROM service_requests")
+@Synchronize("service_requests")
 public class ServiceRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = false)
-    private User client;
+    @Column(name = "professional_id")
+    private Long professionalId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "professional_id", nullable = false)
-    private User professional;
-
-    @Column(name = "service_name", nullable = false, length = 100)
+    @Column(name = "service_name")
     private String serviceName;
 
-    @Column(name = "professional_name", nullable = false, length = 150)
+    @Column(name = "professional_name")
     private String professionalName;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RequestStatus status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at")
     private Instant createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     private Instant updatedAt;
 
     public ServiceRequest() {
@@ -55,63 +51,27 @@ public class ServiceRequest {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getClient() {
-        return client;
-    }
-
-    public void setClient(User client) {
-        this.client = client;
-    }
-
-    public User getProfessional() {
-        return professional;
-    }
-
-    public void setProfessional(User professional) {
-        this.professional = professional;
+    public Long getProfessionalId() {
+        return professionalId;
     }
 
     public String getServiceName() {
         return serviceName;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-    }
-
     public String getProfessionalName() {
         return professionalName;
-    }
-
-    public void setProfessionalName(String professionalName) {
-        this.professionalName = professionalName;
     }
 
     public RequestStatus getStatus() {
         return status;
     }
 
-    public void setStatus(RequestStatus status) {
-        this.status = status;
-    }
-
     public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public Instant getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

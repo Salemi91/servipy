@@ -32,4 +32,6 @@ public interface ProfessionalProfileRepository extends JpaRepository<Professiona
     Optional<ProfessionalProfile> findActiveById(@Param("id") Long id);
 
     List<ProfessionalProfile> findByApprovalStatus(ApprovalStatus approvalStatus);
+
+    Optional<ProfessionalProfile> findByUserId(Long userId);
 }
