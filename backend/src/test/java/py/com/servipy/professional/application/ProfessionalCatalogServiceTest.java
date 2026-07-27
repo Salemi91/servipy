@@ -53,15 +53,8 @@ class ProfessionalCatalogServiceTest {
 
     @BeforeEach
     void setUp() {
-        activeUser = new User();
+        activeUser = new User("Juan Pérez", "juan@test.com", "hash", Role.PROFESSIONAL);
         activeUser.setId(1L);
-        activeUser.setName("Juan Pérez");
-        activeUser.setEmail("juan@test.com");
-        activeUser.setPasswordHash("hash");
-        activeUser.setRole(Role.PROFESSIONAL);
-        activeUser.setActive(true);
-        activeUser.setCreatedAt(Instant.now());
-        activeUser.setUpdatedAt(Instant.now());
 
         city = new City();
         city.setId(1L);

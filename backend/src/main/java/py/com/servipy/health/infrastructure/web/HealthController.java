@@ -17,9 +17,6 @@ public class HealthController {
 
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> health() {
-        return ResponseEntity.ok(Map.of(
-            "status", "UP",
-            "application", "servipy-backend"
-        ));
+        return ResponseEntity.ok(Map.of("status", "UP"));
     }
 }

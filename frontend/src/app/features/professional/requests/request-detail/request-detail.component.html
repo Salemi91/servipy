@@ -1,0 +1,138 @@
+<div class="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
+  <!-- Back link -->
+  <a
+    routerLink=".."
+    class="mb-4 inline-flex items-center gap-1 text-sm text-blue-600 hover:underline min-h-[44px]"
+  >
+    ← Volver al listado
+  </a>
+
+  <!-- Loading -->
+  <div *ngIf="state() === 'loading'" class="flex justify-center py-12">
+    <div class="text-sm text-gray-500">Cargando detalle...</div>
+  </div>
+
+  <!-- Error -->
+  <div
+    *ngIf="state() === 'error'"
+    class="flex flex-col items-center py-12 text-center"
+  >
+    <p class="text-sm text-red-600 mb-4">Error al cargar la solicitud.</p>
+    <button
+      (click)="onRetry()"
+      class="min-h-[44px] min-w-[44px] rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+    >
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Not Found -->
+  <div
+    *ngIf="state() === 'not-found'"
+    class="flex flex-col items-center py-12 text-center"
+  >
+    <p class="text-sm text-gray-500 mb-4">Solicitud no encontrada.</p>
+    <a
+      routerLink=".."
+      class="min-h-[44px] min-w-[44px] rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+    >
+      Volver al listado
+    </a>
+  </div>
+
+  <!-- Loaded -->
+  <ng-container *ngIf="state() === 'loaded' && request() as req">
+    <!-- Toast/notification -->
+    <div
+      *ngIf="statusMessage() as msg"
+      class="mb-4 rounded-lg px-4 py-3 text-sm"
+      [ngClass]="{
+        'bg-green-50 text-green-800 border border-green-200': msg.type === 'success',
+        'bg-red-50 text-red-800 border border-red-200': msg.type === 'error'
+      }"
+    >
+      {{ msg.text }}
+    </div>
+
+    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <!-- Header with status -->
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-xl font-bold text-gray-900">Detalle de solicitud</h1>
+        <span
+          class="inline-flex rounded-full px-3 py-1 text-xs font-medium"
+          [ngClass]="getStatusClasses(req.status)"
+        >
+          {{ getStatusLabel(req.status) }}
+        </span>
+      </div>
+
+      <!-- Detail fields -->
+      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Nombre del cliente</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ req.clientName }}</dd>
+        </div>
+
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Email</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ req.clientEmail }}</dd>
+        </div>
+
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Teléfono</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            {{ req.clientPhone || 'No proporcionado' }}
+          </dd>
+        </div>
+
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Fecha deseada</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            {{ req.desiredDate ? (req.desiredDate | date : 'dd/MM/yyyy') : 'No especificada' }}
+          </dd>
+        </div>
+
+        <div class="sm:col-span-2">
+          <dt class="text-xs font-medium text-gray-500 uppercase">Asunto</dt>
+          <dd class="mt-1 text-sm text-gray-900">{{ req.subject }}</dd>
+        </div>
+
+        <div class="sm:col-span-2">
+          <dt class="text-xs font-medium text-gray-500 uppercase">Descripción</dt>
+          <dd class="mt-1 text-sm text-gray-900 whitespace-pre-line">{{ req.description }}</dd>
+        </div>
+
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Creada</dt>
+          <dd class="mt-1 text-sm text-gray-500">{{ req.createdAt | date : 'dd/MM/yyyy HH:mm' }}</dd>
+        </div>
+
+        <div>
+          <dt class="text-xs font-medium text-gray-500 uppercase">Última actualización</dt>
+          <dd class="mt-1 text-sm text-gray-500">{{ req.updatedAt | date : 'dd/MM/yyyy HH:mm' }}</dd>
+        </div>
+      </dl>
+
+      <!-- Action buttons (only when PENDING) -->
+      <div
+        *ngIf="req.status === 'PENDING'"
+        class="mt-6 flex flex-col gap-3 sm:flex-row"
+      >
+        <button
+          (click)="onAccept()"
+          [disabled]="isUpdating()"
+          class="min-h-[44px] min-w-[44px] flex-1 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ isUpdating() ? 'Procesando...' : 'Aceptar' }}
+        </button>
+        <button
+          (click)="onReject()"
+          [disabled]="isUpdating()"
+          class="min-h-[44px] min-w-[44px] flex-1 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ isUpdating() ? 'Procesando...' : 'Rechazar' }}
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</div>

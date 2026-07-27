@@ -59,21 +59,21 @@ Plan de implementación para la capa fundacional del monorepo ServiPy y el siste
     - _Requisitos: 1.5_
 
 - [ ] 4. feat: Implementar entidad User, Role enum y repositorio
-  - [ ] 4.1 Crear enum `Role.java` y entidad `User.java`
+  - [x] 4.1 Crear enum `Role.java` y entidad `User.java`
     - Enum Role con valores CLIENT, PROFESSIONAL, ADMIN
     - Entidad User con anotaciones JPA (@Entity, @Table, @Id, @GeneratedValue, @Enumerated, etc.)
     - Implementar @PrePersist y @PreUpdate para timestamps
     - Configurar unique constraint en email
     - _Requisitos: 9.1_
 
-  - [ ] 4.2 Crear `UserRepository.java`
+  - [x] 4.2 Crear `UserRepository.java`
     - Extender JpaRepository<User, Long>
     - Método `Optional<User> findByEmailIgnoreCase(String email)`
     - Método `boolean existsByEmailIgnoreCase(String email)`
     - _Requisitos: 4.3, 5.3_
 
 - [ ] 5. feat: Implementar DTOs de request y response
-  - [ ] 5.1 Crear DTOs del backend
+  - [x] 5.1 Crear DTOs del backend
     - `RegisterRequest` record con validaciones: @NotBlank, @Size, @Email
     - `LoginRequest` record con validaciones
     - `AuthResponse` record con accessToken, tokenType, user
@@ -82,7 +82,7 @@ Plan de implementación para la capa fundacional del monorepo ServiPy y el siste
     - _Requisitos: 8.4, 12.1_
 
 - [ ] 6. feat: Implementar JwtService para generación y validación de tokens
-  - [ ] 6.1 Crear `JwtService.java`
+  - [x] 6.1 Crear `JwtService.java`
     - Método `generateToken(User user)`: crear JWT con claims sub (userId), email, role, exp
     - Método `isTokenValid(String token)`: verificar firma y expiración
     - Método `extractUserId(String token)`: extraer claim sub
@@ -99,7 +99,7 @@ Plan de implementación para la capa fundacional del monorepo ServiPy y el siste
     - **Valida: Requisitos 6.1, 6.6, 8.5**
 
 - [ ] 7. feat: Implementar SecurityConfig y JwtAuthenticationFilter
-  - [ ] 7.1 Crear `SecurityConfig.java`
+  - [x] 7.1 Crear `SecurityConfig.java`
     - Deshabilitar CSRF (API stateless)
     - Configurar sesión como STATELESS
     - Definir endpoints públicos: /api/v1/health, /api/v1/auth/login, /api/v1/auth/register/**
@@ -108,7 +108,7 @@ Plan de implementación para la capa fundacional del monorepo ServiPy y el siste
     - Agregar JwtAuthenticationFilter antes de UsernamePasswordAuthenticationFilter
     - _Requisitos: 8.7, 9.4, 9.5, 9.6_
 
-  - [ ] 7.2 Crear `JwtAuthenticationFilter.java`
+  - [x] 7.2 Crear `JwtAuthenticationFilter.java`
     - Extender OncePerRequestFilter
     - Extraer token del header Authorization (formato Bearer)
     - Si no hay token → continuar sin autenticar
@@ -131,7 +131,7 @@ Plan de implementación para la capa fundacional del monorepo ServiPy y el siste
     - **Valida: Requisitos 7.2, 7.4, 8.1, 8.2**
 
 - [ ] 8. feat: Implementar GlobalExceptionHandler y excepciones custom
-  - [ ] 8.1 Crear excepciones custom y GlobalExceptionHandler
+  - [x] 8.1 Crear excepciones custom y GlobalExceptionHandler
     - Crear `DuplicateEmailException`, `AccountInactiveException`
     - Implementar `GlobalExceptionHandler` con @RestControllerAdvice
     - Manejar: MethodArgumentNotValidException → 400 VALIDATION_ERROR
@@ -157,27 +157,27 @@ Plan de implementación para la capa fundacional del monorepo ServiPy y el siste
     - **Valida: Requisito 12.4**
 
 - [ ] 9. feat: Implementar HealthController
-  - [ ] 9.1 Crear `HealthController.java`
+  - [x] 9.1 Crear `HealthController.java`
     - Endpoint GET /api/v1/health que retorna `{"status": "UP"}` con HTTP 200
     - Content-Type: application/json
     - Accesible sin autenticación (ya configurado en SecurityConfig)
     - _Requisitos: 3.1, 3.2, 3.3_
 
 - [ ] 10. feat: Implementar AuthService con registro y login
-  - [ ] 10.1 Crear `AuthService.java` con lógica de registro
+  - [x] 10.1 Crear `AuthService.java` con lógica de registro
     - Método `registerClient(RegisterRequest)`: verificar email único, hash bcrypt, crear User con role=CLIENT, generar JWT, retornar AuthResponse
     - Método `registerProfessional(RegisterRequest)`: igual pero con role=PROFESSIONAL
     - Comparación de email case-insensitive
     - Trim de name antes de validar longitud
     - _Requisitos: 4.1, 4.2, 4.3, 4.7, 5.1, 5.2, 5.3, 5.7, 9.2_
 
-  - [ ] 10.2 Implementar lógica de login en `AuthService.java`
+  - [x] 10.2 Implementar lógica de login en `AuthService.java`
     - Método `login(LoginRequest)`: buscar usuario por email, verificar password con BCrypt.matches(), verificar active=true, generar JWT, retornar AuthResponse
     - Lanzar excepción genérica para email no encontrado o password incorrecto (sin revelar cuál)
     - Lanzar AccountInactiveException si active=false
     - _Requisitos: 6.1, 6.2, 6.3, 6.4, 6.5_
 
-  - [ ] 10.3 Implementar método `getCurrentUser` en AuthService
+  - [x] 10.3 Implementar método `getCurrentUser` en AuthService
     - Recibir userId, buscar en BD, retornar UserResponse
     - Si usuario no existe o está inactivo → 401
     - _Requisitos: 7.1_
@@ -198,7 +198,7 @@ Plan de implementación para la capa fundacional del monorepo ServiPy y el siste
     - **Valida: Requisitos 6.3, 6.4**
 
 - [ ] 11. feat: Implementar AuthController
-  - [ ] 11.1 Crear `AuthController.java` con endpoints de autenticación
+  - [x] 11.1 Crear `AuthController.java` con endpoints de autenticación
     - POST /api/v1/auth/register/client → delegar a AuthService.registerClient, retornar 201
     - POST /api/v1/auth/register/professional → delegar a AuthService.registerProfessional, retornar 201
     - POST /api/v1/auth/login → delegar a AuthService.login, retornar 200

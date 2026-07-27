@@ -41,6 +41,10 @@ management:
       exposure:
         include: health
 
+app:
+  cors:
+    allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:4200}
+
 servipy:
   upload:
     dir: uploads
