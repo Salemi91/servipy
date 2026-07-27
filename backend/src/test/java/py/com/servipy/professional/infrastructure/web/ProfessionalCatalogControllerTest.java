@@ -89,7 +89,7 @@ class ProfessionalCatalogControllerTest {
 
         mockMvc.perform(get("/api/v1/professionals/999"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value("PROFESSIONAL_NOT_FOUND"))
+                .andExpect(jsonPath("$.code").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("Profesional no encontrado"));
     }
 }

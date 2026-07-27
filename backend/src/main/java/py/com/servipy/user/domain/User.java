@@ -42,6 +42,12 @@ public class User {
     @Column(nullable = false)
     private Boolean active;
 
+    @Column(length = 20)
+    private String phone;
+
+    @Column(name = "photo_url", length = 500)
+    private String photoUrl;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -95,6 +101,22 @@ public class User {
 
     public Boolean getActive() {
         return active;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     public Instant getCreatedAt() {
