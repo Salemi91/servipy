@@ -292,11 +292,9 @@ class ServiceRequestServiceTest {
     }
 
     private ProfessionalProfile buildProfessional(Long id, boolean active, ApprovalStatus approvalStatus) {
-        User user = new User();
+        User user = new User("Professional " + id, "pro" + id + "@example.com", "hash", py.com.servipy.user.domain.Role.PROFESSIONAL);
         user.setId(id);
         user.setActive(active);
-        user.setName("Professional " + id);
-        user.setEmail("pro" + id + "@example.com");
 
         ProfessionalProfile professional = new ProfessionalProfile();
         professional.setId(id);
