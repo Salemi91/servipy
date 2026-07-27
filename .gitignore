@@ -42,6 +42,7 @@ package-lock.json.bak
 # ========================
 *.env
 .env.*
+!.env.example
 application-local.yml
 application-local.properties
 *.key
