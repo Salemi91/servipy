@@ -25,6 +25,11 @@ spring:
       write-dates-as-timestamps: false
     date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
 server:
   port: 8080
   servlet:
@@ -35,3 +40,7 @@ management:
     web:
       exposure:
         include: health
+
+servipy:
+  upload:
+    dir: uploads
