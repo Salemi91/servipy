@@ -14,7 +14,6 @@ import py.com.servipy.client.infrastructure.persistence.UserRepository;
 import py.com.servipy.shared.exception.ResourceNotFoundException;
 import py.com.servipy.user.domain.User;
 
-import java.time.Instant;
 
 /**
  * Implementación del servicio de perfil del cliente.
@@ -51,7 +50,6 @@ public class ClientProfileServiceImpl implements ClientProfileService {
 
         user.setName(request.name());
         user.setPhone(request.phone());
-        user.setUpdatedAt(Instant.now());
 
         return toResponse(user);
     }
@@ -65,7 +63,6 @@ public class ClientProfileServiceImpl implements ClientProfileService {
         String photoUrl = photoStorageService.store(userId, file);
 
         user.setPhotoUrl(photoUrl);
-        user.setUpdatedAt(Instant.now());
 
         return new PhotoUploadResponse(photoUrl);
     }
@@ -85,7 +82,6 @@ public class ClientProfileServiceImpl implements ClientProfileService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
-        user.setUpdatedAt(Instant.now());
     }
 
     private ClientProfileResponse toResponse(User user) {
