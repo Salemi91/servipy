@@ -5,8 +5,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import py.com.servipy.professional.domain.ApprovalStatus;
 import py.com.servipy.professional.domain.ProfessionalProfile;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ProfessionalProfileRepository extends JpaRepository<ProfessionalProfile, Long>,
@@ -28,4 +30,6 @@ public interface ProfessionalProfileRepository extends JpaRepository<Professiona
           AND os.active = true
     """)
     Optional<ProfessionalProfile> findActiveById(@Param("id") Long id);
+
+    List<ProfessionalProfile> findByApprovalStatus(ApprovalStatus approvalStatus);
 }

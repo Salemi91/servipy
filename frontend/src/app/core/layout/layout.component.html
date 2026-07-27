@@ -2,11 +2,21 @@
   <!-- Header -->
   <header class="bg-white shadow-sm">
     <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-      <a href="/" class="flex items-center gap-2">
+      <a routerLink="/" class="flex items-center gap-2">
         <img src="/images/logo.png" alt="ServiPy" class="h-14 w-auto" />
       </a>
-      <nav class="hidden space-x-4 sm:flex">
-        <!-- Navigation links will be added when auth is implemented -->
+      <nav class="flex items-center space-x-4">
+        @if (authService.currentUser()) {
+          <span class="text-sm text-gray-600">{{ authService.currentUser()?.name }}</span>
+          <button
+            (click)="authService.logout()"
+            class="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200">
+            Salir
+          </button>
+        } @else {
+          <a routerLink="/login" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Iniciar sesión</a>
+          <a routerLink="/register" class="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">Registrarse</a>
+        }
       </nav>
     </div>
   </header>

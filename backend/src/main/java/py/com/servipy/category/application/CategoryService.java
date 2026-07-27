@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import py.com.servipy.category.application.dto.CategoryDto;
+import py.com.servipy.category.application.dto.CreateCategoryRequest;
+import py.com.servipy.category.domain.Category;
 import py.com.servipy.category.infrastructure.persistence.CategoryRepository;
 
 import java.util.List;
@@ -20,7 +22,18 @@ public class CategoryService {
 
     public List<CategoryDto> findAllActive() {
         return categoryRepository.findByActiveTrueOrderByNameAsc().stream()
-                .map(c -> new CategoryDto(c.getId(), c.getName(), c.getIcon(), c.getDescription()))
-                .toList();
+            .map(c -> new CategoryDto(c.getId(), c.getName(), c.getIcon(), c.getDescription()))
+            .toList();
+    }
+
+    @Transactional
+    public CategoryDto create(CreateCategoryRequest request) {
+        Category category = new Category();
+        category.setName(request.name());
+        category.setIcon(request.icon());
+        category.setDescription(request.description());
+        category.setActive(true);
+        Category saved = categoryRepository.save(category);
+        return new CategoryDto(saved.getId(), saved.getName(), saved.getIcon(), saved.getDescription());
     }
 }
