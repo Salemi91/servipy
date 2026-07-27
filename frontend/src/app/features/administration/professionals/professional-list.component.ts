@@ -11,6 +11,12 @@ import { ProfessionalAdmin } from '../../../shared/models/professional-admin.mod
     <div class="p-6">
       <h2 class="text-2xl font-semibold text-gray-800 mb-6">Profesionales Pendientes</h2>
 
+      @if (errorMessage) {
+        <div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+          {{ errorMessage }}
+        </div>
+      }
+
       @if (loading) {
         <p class="text-gray-500">Cargando profesionales...</p>
       }
@@ -92,6 +98,7 @@ export class ProfessionalListComponent implements OnInit {
 
   professionals: ProfessionalAdmin[] = [];
   loading = true;
+  errorMessage = '';
 
   showConfirmDialog = false;
   confirmTitle = '';
@@ -104,6 +111,7 @@ export class ProfessionalListComponent implements OnInit {
   }
 
   loadProfessionals(): void {
+    this.errorMessage = '';
     this.loading = true;
     this.service.getPending().subscribe({
       next: (data) => {
@@ -132,6 +140,7 @@ export class ProfessionalListComponent implements OnInit {
   }
 
   executeAction(): void {
+    this.errorMessage = '';
     if (!this.selectedProfessional) return;
     const id = this.selectedProfessional.id;
 
@@ -147,6 +156,8 @@ export class ProfessionalListComponent implements OnInit {
       },
       error: () => {
         this.showConfirmDialog = false;
+        this.selectedProfessional = null;
+        this.errorMessage = 'Error al procesar la acción. Intente nuevamente.';
       },
     });
   }
