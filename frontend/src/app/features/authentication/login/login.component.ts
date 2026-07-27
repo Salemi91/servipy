@@ -17,7 +17,8 @@ import { Role } from '../../../shared/models/auth.model';
     <div class="flex min-h-[60vh] items-center justify-center px-4">
       <div class="w-full max-w-md space-y-6">
         <div class="text-center">
-          <h1 class="text-2xl font-bold text-gray-900">Iniciar sesión</h1>
+          <img src="/images/logo.png" alt="ServiPy" class="mx-auto h-32 w-auto" />
+          <h1 class="mt-4 text-2xl font-bold text-gray-900">Iniciar sesión</h1>
           <p class="mt-1 text-sm text-gray-500">Ingresá tus credenciales para acceder</p>
         </div>
 
