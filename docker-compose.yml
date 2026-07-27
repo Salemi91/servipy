@@ -12,10 +12,15 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-servipy}
       MYSQL_USER: ${MYSQL_USER:-servipy_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-servipy_pass}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mysql_data:
