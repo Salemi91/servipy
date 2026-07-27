@@ -3,6 +3,9 @@ package py.com.servipy.shared.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,10 +44,20 @@ public class GlobalExceptionHandler {
             Instant.now().toString(),
             HttpStatus.BAD_REQUEST.value(),
             "VALIDATION_ERROR",
-            "Error de validación",
+            "Error de validación en los campos enviados",
             fieldErrors
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEmail(DuplicateEmailException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.CONFLICT,
+            "DUPLICATE_EMAIL",
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(InvalidStateTransitionException.class)
@@ -57,6 +70,46 @@ public class GlobalExceptionHandler {
             List.of()
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(AccountInactiveException.class)
+    public ResponseEntity<ErrorResponse> handleAccountInactive(AccountInactiveException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.FORBIDDEN,
+            "ACCOUNT_INACTIVE",
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.UNAUTHORIZED,
+            "INVALID_CREDENTIALS",
+            "Email o contraseña incorrectos"
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.FORBIDDEN,
+            "FORBIDDEN",
+            "No tiene permisos para acceder a este recurso"
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.UNAUTHORIZED,
+            "UNAUTHORIZED",
+            "No autorizado"
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
