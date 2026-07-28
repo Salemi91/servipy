@@ -1,0 +1,58 @@
+# ==========================================
+# Control de Versiones y Git
+# ==========================================
+.git
+.gitignore
+.gitattributes
+.github
+
+# ==========================================
+# Archivos de Entorno y Secretos (¡Crítico!)
+# ==========================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ==========================================
+# Frontend (Angular / Node.js)
+# ==========================================
+**/node_modules/
+**/dist/
+**/.angular/
+**/.npm/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+
+# ==========================================
+# Backend (Spring Boot / Java / Maven)
+# ==========================================
+**/target/
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+**/*.class
+**/*.jar
+**/*.war
+
+# ==========================================
+# IDEs y Editores de Código
+# ==========================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# Documentación y Archivos de despliegue local
+# ==========================================
+README.md
+*.tf
+*.tfstate*
+.terraform/
+docker-compose*.yml
