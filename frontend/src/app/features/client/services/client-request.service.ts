@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { timeout } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
-import { ServiceRequest, PaginatedResponse } from '../models/service-request.model';
+import { ServiceRequest, ServiceRequestDetail, PaginatedResponse } from '../models/service-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class ClientRequestService {
@@ -24,6 +24,12 @@ export class ClientRequestService {
     return this.http.get<PaginatedResponse<ServiceRequest>>(
       `${this.baseUrl}/client/requests`,
       { params }
+    ).pipe(timeout(this.TIMEOUT_MS));
+  }
+
+  getRequestDetail(id: number): Observable<ServiceRequestDetail> {
+    return this.http.get<ServiceRequestDetail>(
+      `${this.baseUrl}/client/requests/${id}`
     ).pipe(timeout(this.TIMEOUT_MS));
   }
 }

@@ -10,16 +10,15 @@ public final class ServiceRequestSpecification {
     private ServiceRequestSpecification() {
     }
 
-    public static Specification<ServiceRequest> build(Long clientId, RequestStatus status) {
-        return Specification.where(byClientId(clientId))
+    public static Specification<ServiceRequest> build(String clientEmail, RequestStatus status) {
+        return Specification.where(byClientEmail(clientEmail))
                 .and(byStatus(status));
     }
 
-    private static Specification<ServiceRequest> byClientId(Long clientId) {
-        // The client module's service_requests view doesn't have a direct client FK;
-        // this specification currently cannot filter by client since the table
-        // uses client_email instead of client_id. Return all for now.
-        return null;
+    private static Specification<ServiceRequest> byClientEmail(String clientEmail) {
+        if (clientEmail == null || clientEmail.isBlank()) return null;
+        return (root, query, cb) ->
+                cb.equal(root.get("clientEmail"), clientEmail);
     }
 
     private static Specification<ServiceRequest> byStatus(RequestStatus status) {
