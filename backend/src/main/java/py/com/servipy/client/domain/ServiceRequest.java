@@ -15,10 +15,23 @@ import java.time.Instant;
 /**
  * Vista de solo lectura de las solicitudes de servicio desde la perspectiva del cliente.
  * Usa @Subselect para evitar conflictos con la entidad principal ServiceRequest.
+ * Incluye JOIN para obtener nombre del profesional y filtra por client_email.
  */
 @Entity(name = "ClientServiceRequest")
 @Immutable
-@Subselect("SELECT id, professional_id, client_name AS service_name, subject AS professional_name, status, created_at, updated_at FROM service_requests")
+@Subselect("""
+    SELECT sr.id,
+           sr.professional_id,
+           sr.client_email,
+           sr.subject AS service_name,
+           u.name AS professional_name,
+           sr.status,
+           sr.created_at,
+           sr.updated_at
+    FROM service_requests sr
+    JOIN professional_profiles pp ON pp.id = sr.professional_id
+    JOIN users u ON u.id = pp.user_id
+    """)
 @Synchronize("service_requests")
 public class ServiceRequest {
 
@@ -27,6 +40,9 @@ public class ServiceRequest {
 
     @Column(name = "professional_id")
     private Long professionalId;
+
+    @Column(name = "client_email")
+    private String clientEmail;
 
     @Column(name = "service_name")
     private String serviceName;
@@ -53,6 +69,10 @@ public class ServiceRequest {
 
     public Long getProfessionalId() {
         return professionalId;
+    }
+
+    public String getClientEmail() {
+        return clientEmail;
     }
 
     public String getServiceName() {

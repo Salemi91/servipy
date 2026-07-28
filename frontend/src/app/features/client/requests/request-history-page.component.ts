@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { timeout, TimeoutError } from 'rxjs';
 
 import { ClientRequestService } from '../services/client-request.service';
@@ -11,10 +12,18 @@ type PageState = 'loading' | 'loaded' | 'error';
 @Component({
   selector: 'app-request-history-page',
   standalone: true,
-  imports: [CommonModule, DatePipe, RequestStatusBadgeComponent],
+  imports: [CommonModule, DatePipe, RequestStatusBadgeComponent, RouterLink],
   template: `
     <div>
-      <h1 class="text-2xl font-semibold text-gray-800 mb-6">Mis Solicitudes</h1>
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800">Mis Solicitudes</h1>
+        <a
+          routerLink="/profesionales"
+          class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+        >
+          + Nueva Solicitud
+        </a>
+      </div>
 
       <!-- Filter row -->
       <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -64,7 +73,13 @@ type PageState = 'loading' | 'loaded' | 'error';
       <!-- Empty -->
       @if (state() === 'loaded' && requests().length === 0) {
         <div class="flex flex-col items-center py-16">
-          <p class="text-gray-500">No ha realizado solicitudes aún.</p>
+          <p class="text-gray-500 mb-4">No ha realizado solicitudes aún.</p>
+          <a
+            routerLink="/profesionales"
+            class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+          >
+            Buscar un profesional
+          </a>
         </div>
       }
 
@@ -72,21 +87,26 @@ type PageState = 'loading' | 'loaded' | 'error';
       @if (state() === 'loaded' && requests().length > 0) {
         <div class="space-y-4">
           @for (request of requests(); track request.id) {
-            <div class="bg-white rounded-lg shadow p-4 flex justify-between items-start">
-              <div>
-                <p class="font-medium text-gray-800">{{ request.serviceName }}</p>
-                <p class="text-sm text-gray-500">{{ request.professionalName }}</p>
-                <p class="text-xs text-gray-400 mt-1">
-                  Creado: {{ request.createdAt | date:'dd/MM/yyyy HH:mm' }}
-                </p>
+            <a
+              [routerLink]="['/client/requests', request.id]"
+              class="block bg-white rounded-lg shadow p-4 hover:shadow-md hover:border-blue-200 border border-transparent transition-all cursor-pointer"
+            >
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="font-medium text-gray-800">{{ request.serviceName }}</p>
+                  <p class="text-sm text-gray-500">{{ request.professionalName }}</p>
+                  <p class="text-xs text-gray-400 mt-1">
+                    Creado: {{ request.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                  </p>
+                </div>
+                <div class="flex flex-col items-end gap-1">
+                  <app-request-status-badge [status]="request.status" />
+                  <p class="text-xs text-gray-400">
+                    Actualizado: {{ request.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+                  </p>
+                </div>
               </div>
-              <div class="flex flex-col items-end gap-1">
-                <app-request-status-badge [status]="request.status" />
-                <p class="text-xs text-gray-400">
-                  Actualizado: {{ request.updatedAt | date:'dd/MM/yyyy HH:mm' }}
-                </p>
-              </div>
-            </div>
+            </a>
           }
         </div>
 

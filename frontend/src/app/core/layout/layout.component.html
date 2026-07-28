@@ -7,6 +7,12 @@
       </a>
       <nav class="flex items-center space-x-4">
         @if (authService.currentUser()) {
+          @if (authService.getUserRole() === 'CLIENT') {
+            <a routerLink="/client/requests" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Mi Panel</a>
+          }
+          @if (authService.getUserRole() === 'PROFESSIONAL') {
+            <a routerLink="/professional" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Mi Panel</a>
+          }
           <span class="text-sm text-gray-600">{{ authService.currentUser()?.name }}</span>
           <button
             (click)="authService.logout()"
