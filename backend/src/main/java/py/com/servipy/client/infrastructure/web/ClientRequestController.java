@@ -4,11 +4,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import py.com.servipy.client.application.ClientRequestService;
+import py.com.servipy.client.application.dto.ServiceRequestDetailResponse;
 import py.com.servipy.client.application.dto.ServiceRequestPageResponse;
 import py.com.servipy.user.domain.User;
 
@@ -45,7 +47,20 @@ public class ClientRequestController {
             throw new IllegalArgumentException("El parámetro 'size' debe estar entre 1 y 100");
         }
 
-        ServiceRequestPageResponse response = clientRequestService.getRequests(user.getId(), status, page, size);
+        ServiceRequestPageResponse response = clientRequestService.getRequests(user.getEmail(), status, page, size);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * GET /api/v1/client/requests/{id}
+     * Retorna el detalle de una solicitud específica del cliente autenticado.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ServiceRequestDetailResponse> getRequestDetail(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+
+        ServiceRequestDetailResponse response = clientRequestService.getRequestDetail(id, user.getEmail());
         return ResponseEntity.ok(response);
     }
 }
