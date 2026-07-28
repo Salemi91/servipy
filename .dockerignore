@@ -1,58 +1,36 @@
-# ==========================================
-# Control de Versiones y Git
-# ==========================================
+# Git
 .git
 .gitignore
-.gitattributes
-.github
 
-# ==========================================
-# Archivos de Entorno y Secretos (¡Crítico!)
-# ==========================================
-.env
-.env.*
-!.env.example
-*.pem
-*.key
-
-# ==========================================
-# Frontend (Angular / Node.js)
-# ==========================================
-**/node_modules/
-**/dist/
-**/.angular/
-**/.npm/
-**/npm-debug.log*
-**/yarn-debug.log*
-**/yarn-error.log*
-
-# ==========================================
-# Backend (Spring Boot / Java / Maven)
-# ==========================================
-**/target/
-**/.mvn/
-**/mvnw
-**/mvnw.cmd
-**/*.class
-**/*.jar
-**/*.war
-
-# ==========================================
-# IDEs y Editores de Código
-# ==========================================
-.idea/
-.vscode/
-*.swp
-*.swo
+# IDE
+.idea
+.vscode
+.kiro
 *.iml
-.DS_Store
-Thumbs.db
 
-# ==========================================
-# Documentación y Archivos de despliegue local
-# ==========================================
-README.md
+# Backend
+backend/target/
+backend/.jqwik-database
+
+# Frontend
+frontend/node_modules/
+frontend/.angular/
+frontend/dist/
+
+# Docker
+docker-compose.yml
+.dockerignore
+
+# Docs
+docs/
+*.md
+
+# Environment
+.env
+.env.example
+
+# Terraform
 *.tf
-*.tfstate*
+*.tfstate
+*.tfstate.backup
 .terraform/
-docker-compose*.yml

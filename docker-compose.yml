@@ -1,14 +1,10 @@
-version: '3.8'
-
 services:
-  # --- Base de Datos MySQL 8 ---
-  mysql:
+  mysql_db:
     image: mysql:8.0
     container_name: servipy-mysql
     restart: unless-stopped
-    # Descomenta 'ports' solo si necesitas acceso remoto a la BD desde fuera de la EC2
-    # ports:
-    #   - "3306:3306"
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -19,50 +15,63 @@ services:
       - mysql_data:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     networks:
-      - app-network
+      - servipy-net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # --- Backend Spring Boot (Desde Docker Hub) ---
-  backend:
-    # image: ${DOCKER_USER}/backend-app:latest
+  spring_backend:
+    image: ${DOCKER_REGISTRY:-}servipy-backend:${TAG:-latest}
     build:
-      context: ./backend        # Ruta a la carpeta del proyecto Java
+      context: ./backend
       dockerfile: Dockerfile
     container_name: servipy-backend
     restart: unless-stopped
-    depends_on:
-      mysql:
-        condition: service_healthy
+    ports:
+      - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+      DB_URL: jdbc:mysql://mysql_db:3306/${MYSQL_DATABASE}
+      DB_USERNAME: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-30}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost}
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     networks:
-      - app-network
+      - servipy-net
 
-  # --- Frontend Angular 19 + Nginx (Desde Docker Hub) ---
-  frontend:
-    # image: ${DOCKER_USER}/frontend-app:latest
+  angular_frontend:
+    image: ${DOCKER_REGISTRY:-}servipy-frontend:${TAG:-latest}
     build:
-      context: ./frontend       # Ruta a la carpeta del proyecto Angular
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: servipy-frontend
     restart: unless-stopped
     ports:
       - "80:80"
     depends_on:
-      - backend
+      spring_backend:
+        condition: service_healthy
     networks:
-      - app-network
+      - servipy-net
 
 volumes:
   mysql_data:
+  uploads_data:
 
 networks:
-  app-network:
+  servipy-net:
     driver: bridge
