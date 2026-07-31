@@ -3,7 +3,7 @@
 
   <!-- Filters -->
   <div class="mb-6 space-y-4">
-    <app-search-bar (searchChanged)="onSearchChanged($event)"></app-search-bar>
+    <app-search-bar [initialValue]="searchTerm()" (searchChanged)="onSearchChanged($event)"></app-search-bar>
     <app-category-filter
       [categories]="categories()"
       [selectedCategoryId]="selectedCategoryId()"

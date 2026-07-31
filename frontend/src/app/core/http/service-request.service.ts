@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from '../../../../core/http/api.service';
+import { ApiService } from './api.service';
 import {
   CreateServiceRequestPayload,
   CreateServiceRequestResponse,
   ServiceRequestSummary,
   ServiceRequestDetail,
   ChangeStatusPayload,
-} from '../../../../shared/models/service-request.model';
+} from '@shared/models/service-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class ServiceRequestService {

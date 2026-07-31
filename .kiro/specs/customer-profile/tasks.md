@@ -288,3 +288,9 @@ Implementación del vertical slice `client` para gestión del perfil de cliente 
   ]
 }
 ```
+
+### Tareas de Refactorización y Mejoras Implementadas
+
+- [x] Integración del enlace directo de contacto por WhatsApp condicionado al estado `ACCEPTED`: nuevo endpoint `GET /api/v1/client/requests/{id}/contact` (`ClientRequestService.getProfessionalContact`) que verifica pertenencia de la solicitud al cliente autenticado y devuelve 409 `CONTACT_NOT_AVAILABLE` si la solicitud no está aceptada; en el frontend, `RequestDetailPageComponent` construye el enlace `https://wa.me/<numero>` solo cuando la solicitud está en ese estado.
+- [x] `ClientRequestServiceImpl` reescrito para consumir la capa de aplicación del slice `servicerequest` (`ClientRequestView`) en lugar de repositorios propios sobre una proyección duplicada de `ServiceRequest`, eliminando el acoplamiento cruzado entre slices.
+- [x] Tests unitarios de `ClientRequestServiceImplTest`: contacto disponible en estado `ACCEPTED`, rechazo (409) en `PENDING` y `REJECTED`, listado paginado sin filtro de estado y validación de valores de estado inválidos en el filtro.

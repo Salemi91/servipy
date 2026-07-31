@@ -1,7 +1,9 @@
 package py.com.servipy.servicerequest.application.dto;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -26,5 +28,7 @@ public record CreateServiceRequestDto(
     @Size(max = 2000, message = "La descripción no puede exceder 2000 caracteres")
     String description,
 
+    @NotNull(message = "La fecha preferida es requerida")
+    @FutureOrPresent(message = "La fecha preferida no puede ser anterior a hoy")
     LocalDate desiredDate
 ) {}

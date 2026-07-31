@@ -247,3 +247,10 @@ Implementación del módulo de solicitudes de servicio para ServiPy. Cubre la cr
   ]
 }
 ```
+
+### Tareas de Refactorización y Mejoras Implementadas
+
+- [x] Protección estricta de endpoints de solicitudes de servicio: solo `POST` de creación permanece público; `GET` de lista/detalle y `PATCH` de cambio de estado exigen `@PreAuthorize("hasRole('PROFESSIONAL')")` y verifican que el `professionalId` de la ruta corresponda al perfil del usuario autenticado (404 si no coincide, para no revelar la existencia del recurso).
+- [x] Reemplazo del entry point y access denied handler por defecto de Spring Security por `RestAuthenticationEntryPoint` y `RestAccessDeniedHandler`, de modo que un 401 (sin token o token expirado) o un 403 (rol insuficiente) devuelvan la misma estructura `ErrorResponse` que el resto de la API, en lugar de una respuesta vacía.
+- [x] Unificación de la entidad `ServiceRequest`: eliminada la proyección `@Subselect` y el enum `RequestStatus` duplicados del slice `client`, junto con `ClientServiceRequestRepository`, `ClientUserRepository` y la `Specification` que operaban sobre esa copia. El slice `client` ahora consume `ServiceRequestService` (del slice `servicerequest`) a través de la vista de lectura `ClientRequestView`, sin repositorios cruzados entre slices.
+- [x] Test de integración `ServiceRequestSecurityTest` que verifica contra la aplicación real: 401 sin token en los tres verbos protegidos, 403 cuando un CLIENT intenta acceder, 404 cuando un profesional consulta la bandeja de otro, y que la creación sigue siendo accesible sin autenticación.

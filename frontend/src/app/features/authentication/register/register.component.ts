@@ -1,7 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Role } from '../../../shared/models/auth.model';
@@ -22,6 +22,12 @@ import { ErrorResponse } from '../../../shared/models/api-response.model';
           <h1 class="text-2xl font-bold text-gray-900">Crear cuenta</h1>
           <p class="mt-1 text-sm text-gray-500">Registrate para comenzar a usar ServiPy</p>
         </div>
+
+        @if (preselectedAsProfessional()) {
+          <div role="status" class="rounded-md bg-indigo-50 p-3 text-center text-sm text-indigo-700">
+            Te estás registrando como <strong>Profesional</strong>. Vas a poder publicar tu perfil y tu tarifario apenas confirmes tu cuenta.
+          </div>
+        }
 
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
           <!-- Error general -->
@@ -156,14 +162,16 @@ import { ErrorResponse } from '../../../shared/models/api-response.model';
     </div>
   `,
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly fieldErrors = signal<Record<string, string>>({});
+  readonly preselectedAsProfessional = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
@@ -171,6 +179,14 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(8)]],
     roleType: ['client' as 'client' | 'professional'],
   });
+
+  ngOnInit(): void {
+    // Permite llegar con el tipo de cuenta preseleccionado (ej. desde "Soy profesional" del header/home).
+    if (this.route.snapshot.queryParamMap.get('as') === 'professional') {
+      this.form.get('roleType')?.setValue('professional');
+      this.preselectedAsProfessional.set(true);
+    }
+  }
 
   fieldError(field: string): string | null {
     return this.fieldErrors()[field] ?? null;

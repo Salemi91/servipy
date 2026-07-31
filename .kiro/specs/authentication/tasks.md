@@ -269,3 +269,10 @@ Plan de implementación para la infraestructura completa de autenticación y aut
   ]
 }
 ```
+
+### Tareas de Refactorización y Mejoras Implementadas
+
+- [x] Manejo estandarizado de excepciones de la cadena de seguridad: `RestAuthenticationEntryPoint` (401) y `RestAccessDeniedHandler` (403), apoyados en `ErrorResponseWriter`, garantizan que toda respuesta de error — incluida la que ocurre antes de llegar a un controller — use la misma estructura `ErrorResponse` (`timestamp, status, code, message, errors[]`) que `GlobalExceptionHandler`.
+- [x] `UserRepository` reubicado de `auth.infrastructure.persistence` a `user.infrastructure.persistence`, junto a la entidad `User` que le pertenece, eliminando la dependencia inversa del slice `user` hacia `auth`.
+- [x] `ProfessionalProfileService` deja de usar `EntityManager` directamente (`getReference`/`find`); ahora resuelve el usuario y la ciudad a través de `UserRepository` y `CityService`, respetando el límite entre slices.
+- [x] Backend actualizado a Java 21 (`<java.version>21</java.version>` en `pom.xml`), alineado con la versión declarada en `PROJECT.md` y ejecutado en la suite de tests.

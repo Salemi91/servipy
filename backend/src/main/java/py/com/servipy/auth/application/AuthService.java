@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import py.com.servipy.user.domain.Role;
 import py.com.servipy.user.domain.User;
-import py.com.servipy.auth.infrastructure.persistence.UserRepository;
+import py.com.servipy.user.infrastructure.persistence.UserRepository;
 import py.com.servipy.auth.infrastructure.web.AuthResponse;
 import py.com.servipy.auth.infrastructure.web.LoginRequest;
 import py.com.servipy.auth.infrastructure.web.RegisterRequest;

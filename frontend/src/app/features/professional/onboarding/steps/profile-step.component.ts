@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { CityOption, ProfessionalProfileForm } from '../../../../shared/models/professional.model';
-import { MOCK_CITIES } from '../mock-data';
+import { ProfessionalProfileForm } from '../../../../shared/models/professional.model';
+import { City } from '../../../../shared/models/city.model';
+import { ReferenceDataService } from '../../../../core/services/reference-data.service';
 
 @Component({
   selector: 'app-profile-step',
@@ -14,13 +15,18 @@ export class ProfileStepComponent implements OnInit {
   @Input() initialData: ProfessionalProfileForm | null = null;
   @Output() stepCompleted = new EventEmitter<ProfessionalProfileForm>();
 
+  private readonly referenceData = inject(ReferenceDataService);
+
   form!: FormGroup;
-  cities: CityOption[] = MOCK_CITIES;
+  cities = signal<City[]>([]);
+  citiesError = signal(false);
   sameWhatsapp = false;
 
   private fb = new FormBuilder();
 
   ngOnInit(): void {
+    this.loadCities();
+
     this.form = this.fb.group({
       phone: [
         this.initialData?.phone ?? '',
@@ -38,6 +44,16 @@ export class ProfileStepComponent implements OnInit {
     if (this.initialData && this.initialData.phone && this.initialData.phone === this.initialData.whatsapp) {
       this.sameWhatsapp = true;
     }
+  }
+
+  private loadCities(): void {
+    this.referenceData.getCities().subscribe({
+      next: (cities) => {
+        this.cities.set(cities);
+        this.citiesError.set(false);
+      },
+      error: () => this.citiesError.set(true),
+    });
   }
 
   toggleSameWhatsapp(): void {

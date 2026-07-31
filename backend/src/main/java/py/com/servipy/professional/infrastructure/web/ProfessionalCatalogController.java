@@ -15,6 +15,8 @@ import py.com.servipy.professional.application.ProfessionalCatalogService;
 import py.com.servipy.professional.application.dto.ProfessionalDetailDto;
 import py.com.servipy.professional.application.dto.ProfessionalSummaryDto;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/professionals")
 public class ProfessionalCatalogController {
@@ -26,12 +28,13 @@ public class ProfessionalCatalogController {
     }
 
     /**
-     * GET /api/v1/professionals?categoryId=&search=&page=0&size=12
+     * GET /api/v1/professionals?categoryId=&cityId=&search=&page=0&size=12
      * Público — sin autenticación.
      */
     @GetMapping
     public ResponseEntity<Page<ProfessionalSummaryDto>> list(
             @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long cityId,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
@@ -39,7 +42,7 @@ public class ProfessionalCatalogController {
         int cappedSize = Math.min(size < 1 ? 12 : size, 50);
         Pageable pageable = PageRequest.of(page, cappedSize, Sort.by("user.name").ascending());
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(categoryId, search, pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(categoryId, cityId, search, pageable);
         return ResponseEntity.ok(result);
     }
 
@@ -51,5 +54,15 @@ public class ProfessionalCatalogController {
     public ResponseEntity<ProfessionalDetailDto> detail(@PathVariable Long id) {
         ProfessionalDetailDto dto = catalogService.findById(id);
         return ResponseEntity.ok(dto);
+    }
+
+    /**
+     * GET /api/v1/professionals/category-counts
+     * Público — sin autenticación. Alimenta la sección de categorías
+     * populares del home con la cantidad de profesionales visibles por categoría.
+     */
+    @GetMapping("/category-counts")
+    public ResponseEntity<Map<Long, Long>> categoryCounts() {
+        return ResponseEntity.ok(catalogService.countByCategory());
     }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { ServiceRequestService } from '../services/service-request.service';
+import { ServiceRequestService } from '@core/http/service-request.service';
 import { ServiceRequestSummary } from '../../../../shared/models/service-request.model';
 import { ProfessionalProfileApiService } from '../../services/professional-profile.service';
 

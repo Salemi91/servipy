@@ -1,5 +1,6 @@
 package py.com.servipy.health.infrastructure.web;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +16,17 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class HealthController {
 
+    private final String applicationName;
+
+    public HealthController(@Value("${spring.application.name}") String applicationName) {
+        this.applicationName = applicationName;
+    }
+
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> health() {
-        return ResponseEntity.ok(Map.of("status", "UP"));
+        return ResponseEntity.ok(Map.of(
+            "status", "UP",
+            "application", applicationName
+        ));
     }
 }

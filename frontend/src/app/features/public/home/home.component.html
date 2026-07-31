@@ -1,12 +1,193 @@
-<section class="flex flex-col items-center justify-center py-16 text-center">
-  <h1 class="text-4xl font-bold text-gray-900 sm:text-5xl">ServiPy</h1>
-  <p class="mt-4 max-w-md text-lg text-gray-600">
-    Conectamos clientes con profesionales de servicios.
-  </p>
-  <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-    <a routerLink="/login"
-       class="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white hover:bg-indigo-700">
-      Iniciar sesión
+<!-- ============ HERO ============ -->
+<section
+  class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-blue-600 px-4 py-14 text-center text-white sm:py-20"
+  aria-labelledby="hero-title"
+>
+  <div class="mx-auto max-w-3xl">
+    <h1 id="hero-title" class="text-3xl font-bold leading-tight sm:text-5xl">
+      Conectá con los mejores profesionales para tu hogar y negocio en Paraguay
+    </h1>
+    <p class="mx-auto mt-4 max-w-xl text-base text-indigo-100 sm:text-lg">
+      Buscá por categoría y ciudad, revisá el perfil del profesional y enviá tu solicitud.
+      Cuando la acepta, hablás directo por WhatsApp.
+    </p>
+
+    <!-- Buscador -->
+    <form
+      role="search"
+      aria-label="Buscar profesionales"
+      (ngSubmit)="onSearch()"
+      class="mt-8 rounded-xl bg-white p-3 text-left shadow-xl sm:p-4"
+    >
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_1fr_1.4fr_auto]">
+        <div>
+          <label for="hero-category" class="sr-only">Categoría</label>
+          <select
+            id="hero-category"
+            name="category"
+            [(ngModel)]="searchCategoryId"
+            class="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option [ngValue]="null">Toda categoría</option>
+            @for (cat of categories(); track cat.id) {
+              <option [ngValue]="cat.id">{{ cat.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="hero-city" class="sr-only">Ciudad</label>
+          <select
+            id="hero-city"
+            name="city"
+            [(ngModel)]="searchCityId"
+            class="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option [ngValue]="null">Toda ciudad</option>
+            @for (city of cities(); track city.id) {
+              <option [ngValue]="city.id">{{ city.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="hero-search" class="sr-only">¿Qué servicio necesitás?</label>
+          <input
+            id="hero-search"
+            name="search"
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="¿Qué servicio necesitás? Ej: destape de cañería"
+            class="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="searching()"
+          class="min-h-[44px] min-w-[44px] rounded-lg bg-indigo-600 px-6 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          @if (searching()) {
+            <span class="inline-flex items-center gap-2">
+              <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              Buscando...
+            </span>
+          } @else {
+            Buscar
+          }
+        </button>
+      </div>
+    </form>
+
+    <!-- Badges de confianza -->
+    <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-indigo-100">
+      <li class="flex items-center gap-1.5">
+        <svg class="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        Profesionales aprobados por un administrador
+      </li>
+      <li class="flex items-center gap-1.5">
+        <svg class="h-4 w-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+        </svg>
+        Contacto directo por WhatsApp al aceptar tu solicitud
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ CÓMO FUNCIONA ============ -->
+<section aria-labelledby="how-it-works-title" class="mt-16">
+  <h2 id="how-it-works-title" class="text-center text-2xl font-bold text-gray-900 sm:text-3xl">
+    Cómo funciona
+  </h2>
+  <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
+    @for (step of steps; track step.number) {
+      <article class="rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm">
+        <div
+          class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 text-lg font-bold text-indigo-700"
+          aria-hidden="true"
+        >
+          {{ step.number }}
+        </div>
+        <h3 class="mt-4 text-lg font-semibold text-gray-900">{{ step.title }}</h3>
+        <p class="mt-2 text-sm text-gray-600">{{ step.description }}</p>
+      </article>
+    }
+  </div>
+</section>
+
+<!-- ============ CATEGORÍAS POPULARES ============ -->
+<section aria-labelledby="categories-title" class="mt-16">
+  <div class="flex items-center justify-between">
+    <h2 id="categories-title" class="text-2xl font-bold text-gray-900 sm:text-3xl">
+      Categorías populares
+    </h2>
+    <a
+      routerLink="/profesionales"
+      class="text-sm font-medium text-indigo-600 hover:text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
+    >
+      Ver todo el catálogo →
     </a>
   </div>
+
+  @if (categoriesState() === 'loading') {
+    <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5" aria-hidden="true">
+      @for (i of [1, 2, 3, 4, 5]; track i) {
+        <div class="h-32 animate-pulse rounded-xl bg-gray-100"></div>
+      }
+    </div>
+  }
+
+  @if (categoriesState() === 'error') {
+    <p class="mt-8 text-center text-sm text-gray-500" role="alert">
+      No se pudieron cargar las categorías. Probá recargar la página.
+    </p>
+  }
+
+  @if (categoriesState() === 'loaded') {
+    <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+      @for (cat of categories(); track cat.id) {
+        <button
+          type="button"
+          (click)="onCategoryCardSelected(cat.id)"
+          class="flex min-h-[44px] flex-col items-center gap-2 rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          <svg
+            class="h-8 w-8 text-indigo-600"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="iconPathFor(cat.name)" />
+          </svg>
+          <span class="text-sm font-semibold text-gray-900">{{ cat.name }}</span>
+          <span class="text-xs text-gray-500">
+            {{ cat.professionalCount }} profesional{{ cat.professionalCount === 1 ? '' : 'es' }} disponible{{ cat.professionalCount === 1 ? '' : 's' }}
+          </span>
+        </button>
+      }
+    </div>
+  }
+</section>
+
+<!-- ============ CTA PROFESIONALES ============ -->
+<section aria-labelledby="pro-cta-title" class="mt-16 rounded-2xl bg-gray-900 px-6 py-10 text-center text-white sm:py-14">
+  <h2 id="pro-cta-title" class="text-2xl font-bold sm:text-3xl">¿Ofrecés un servicio?</h2>
+  <p class="mx-auto mt-3 max-w-lg text-sm text-gray-300 sm:text-base">
+    Publicá tu perfil y tu tarifario, y empezá a recibir solicitudes de clientes en tu ciudad.
+  </p>
+  <a
+    routerLink="/register"
+    [queryParams]="{ as: 'professional' }"
+    class="mt-6 inline-block min-h-[44px] rounded-lg bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-900"
+  >
+    Soy profesional, quiero registrarme
+  </a>
 </section>

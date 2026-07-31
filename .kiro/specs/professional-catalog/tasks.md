@@ -249,3 +249,13 @@ Implementación del módulo de catálogo público que permite a visitantes explo
   ]
 }
 ```
+
+### Tareas de Refactorización y Mejoras Implementadas
+
+- [x] Ocultación de datos sensibles de contacto (teléfono/WhatsApp) en las respuestas públicas del catálogo: `ProfessionalDetailDto` y `ProfessionalCatalogService.toDetailDto` ya no incluyen `phone` ni `whatsapp`; el perfil público de `GET /professionals/{id}` solo expone `id, name, photoUrl, description, cityName, availability, services`.
+- [x] Filtro dinámico por ciudad (`cityId`) en `ProfessionalSpecification.inCity` y en `ProfessionalCatalogController`/`ProfessionalCatalogService.findAll`, combinable con `categoryId` y `search`.
+- [x] Endpoint público `GET /api/v1/cities` (`CityController` + `CityService` + `CityRepository`) para alimentar los filtros del catálogo y el onboarding del profesional sin datos mock.
+- [x] Persistencia end-to-end de servicios ofrecidos (`OfferedService`): nuevo `OfferedServiceService` con `findOwnServices`, `create` y `deactivate` (baja lógica), expuesto en `GET|POST /api/v1/professional/profile/services` y `DELETE /api/v1/professional/profile/services/{id}`, todos restringidos al profesional autenticado sobre su propio perfil.
+- [x] Tests unitarios de `OfferedServiceService` (creación con moneda por defecto `PYG`, uso de moneda informada, aislamiento por perfil propio, 404 al intentar operar sobre el perfil o el servicio de otro profesional) y test de controlador que confirma la ausencia de `phone`/`whatsapp` en el detalle público.
+- [x] Persistencia end-to-end de servicios ofrecidos en el flujo de onboarding del profesional: `OnboardingWizardComponent.onConfirmed()` ya no descarta el paso 2 del wizard, sino que encadena `createProfile()` con la creación secuencial de cada servicio recopilado (`persistServices()`), de modo que un profesional recién aprobado por el admin cumple la regla de "al menos un servicio activo" y aparece en el catálogo sin pasos manuales adicionales.
+- [x] Eliminación de los datos mock del onboarding (`mock-data.ts`): `profile-step.component` y `services-step.component` consumen `GET /categories` y `GET /cities` en tiempo real a través de `ReferenceDataService`, compartido con el catálogo público.

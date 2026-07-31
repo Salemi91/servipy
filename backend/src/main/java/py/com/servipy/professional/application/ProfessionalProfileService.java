@@ -2,18 +2,20 @@ package py.com.servipy.professional.application;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import py.com.servipy.city.application.CityService;
 import py.com.servipy.city.domain.City;
 import py.com.servipy.professional.application.dto.CreateProfessionalProfileRequest;
 import py.com.servipy.professional.application.dto.ProfessionalProfileResponse;
+import py.com.servipy.professional.application.exception.ProfileAlreadyExistsException;
 import py.com.servipy.professional.domain.ApprovalStatus;
 import py.com.servipy.professional.domain.Availability;
 import py.com.servipy.professional.domain.ProfessionalProfile;
 import py.com.servipy.professional.infrastructure.persistence.ProfessionalProfileRepository;
-import py.com.servipy.shared.exception.DuplicateEmailException;
 import py.com.servipy.shared.exception.ResourceNotFoundException;
 import py.com.servipy.user.domain.User;
+import py.com.servipy.user.infrastructure.persistence.UserRepository;
 
-import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -22,12 +24,15 @@ import java.util.Optional;
 public class ProfessionalProfileService {
 
     private final ProfessionalProfileRepository profileRepository;
-    private final EntityManager entityManager;
+    private final UserRepository userRepository;
+    private final CityService cityService;
 
     public ProfessionalProfileService(ProfessionalProfileRepository profileRepository,
-                                      EntityManager entityManager) {
+                                      UserRepository userRepository,
+                                      CityService cityService) {
         this.profileRepository = profileRepository;
-        this.entityManager = entityManager;
+        this.userRepository = userRepository;
+        this.cityService = cityService;
     }
 
     /**
@@ -44,25 +49,15 @@ public class ProfessionalProfileService {
      */
     @Transactional
     public ProfessionalProfileResponse create(Long userId, CreateProfessionalProfileRequest request) {
-        // Verificar que no tenga perfil ya
         if (profileRepository.findByUserId(userId).isPresent()) {
-            throw new DuplicateEmailException("Ya existe un perfil profesional para este usuario");
+            throw new ProfileAlreadyExistsException("Ya existe un perfil profesional para este usuario");
         }
 
-        // Validar availability
-        Availability availability;
-        try {
-            availability = Availability.valueOf(request.availability().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Disponibilidad inválida. Valores permitidos: PRESENCIAL, VIRTUAL, AMBOS");
-        }
+        Availability availability = parseAvailability(request.availability());
 
-        // Obtener referencias
-        User user = entityManager.getReference(User.class, userId);
-        City city = entityManager.find(City.class, request.cityId());
-        if (city == null) {
-            throw new ResourceNotFoundException("Ciudad no encontrada con id: " + request.cityId());
-        }
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        City city = cityService.findEntityById(request.cityId());
 
         ProfessionalProfile profile = new ProfessionalProfile();
         profile.setUser(user);
@@ -77,6 +72,15 @@ public class ProfessionalProfileService {
 
         ProfessionalProfile saved = profileRepository.save(profile);
         return toResponse(saved);
+    }
+
+    private Availability parseAvailability(String availability) {
+        try {
+            return Availability.valueOf(availability.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Disponibilidad inválida. Valores permitidos: PRESENCIAL, VIRTUAL, AMBOS");
+        }
     }
 
     private ProfessionalProfileResponse toResponse(ProfessionalProfile p) {

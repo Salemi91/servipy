@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import py.com.servipy.shared.web.JwtAuthenticationFilter;
+import py.com.servipy.shared.web.RestAccessDeniedHandler;
+import py.com.servipy.shared.web.RestAuthenticationEntryPoint;
 
 import java.util.List;
 
@@ -33,12 +35,18 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
+    private final RestAccessDeniedHandler accessDeniedHandler;
 
     @Value("${app.cors.allowed-origin}")
     private String allowedOrigin;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                          RestAuthenticationEntryPoint authenticationEntryPoint,
+                          RestAccessDeniedHandler accessDeniedHandler) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
@@ -58,14 +66,24 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/login").permitAll()
                 .requestMatchers("/api/v1/auth/register/**").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                // Creación de solicitudes: público (formulario del perfil del profesional)
+                .requestMatchers(HttpMethod.POST, "/api/v1/professionals/*/service-requests").permitAll()
+                // El resto de la gestión de solicitudes es privativa del profesional.
+                // Debe declararse antes del catálogo para no quedar cubierta por su comodín.
+                .requestMatchers("/api/v1/professionals/*/service-requests/**").authenticated()
+                .requestMatchers("/api/v1/professionals/*/service-requests").authenticated()
                 // Endpoints públicos de catálogo
                 .requestMatchers(HttpMethod.GET, "/api/v1/professionals/**").permitAll()
-                .requestMatchers("/api/v1/professionals/*/service-requests/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/cities").permitAll()
                 // Endpoints de admin
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 // Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
+            )
+            .exceptionHandling(handling -> handling
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

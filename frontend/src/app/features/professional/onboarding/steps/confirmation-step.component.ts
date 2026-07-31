@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { OfferedServiceForm, ProfessionalProfileForm } from '../../../../shared/models/professional.model';
-import { MOCK_CATEGORIES, MOCK_CITIES } from '../mock-data';
+import { Category } from '../../../../shared/models/category.model';
+import { City } from '../../../../shared/models/city.model';
+import { ReferenceDataService } from '../../../../core/services/reference-data.service';
 
 @Component({
   selector: 'app-confirmation-step',
@@ -9,22 +11,32 @@ import { MOCK_CATEGORIES, MOCK_CITIES } from '../mock-data';
   imports: [RouterLink],
   templateUrl: './confirmation-step.component.html',
 })
-export class ConfirmationStepComponent {
+export class ConfirmationStepComponent implements OnInit {
   @Input({ required: true }) profileData!: ProfessionalProfileForm;
   @Input({ required: true }) servicesData!: OfferedServiceForm[];
   @Output() goBack = new EventEmitter<void>();
   @Output() confirmed = new EventEmitter<void>();
 
+  private readonly referenceData = inject(ReferenceDataService);
+
   isSubmitted = false;
 
+  private readonly cities = signal<City[]>([]);
+  private readonly categories = signal<Category[]>([]);
+
+  ngOnInit(): void {
+    this.referenceData.getCities().subscribe((cities) => this.cities.set(cities));
+    this.referenceData.getCategories().subscribe((categories) => this.categories.set(categories));
+  }
+
   getCityName(cityId: string): string {
-    const city = MOCK_CITIES.find((c) => c.id === Number(cityId));
+    const city = this.cities().find((c) => c.id === Number(cityId));
     return city?.name ?? 'No especificada';
   }
 
   getCategoryName(categoryId: number | null): string {
     if (!categoryId) return 'Sin categoría';
-    const category = MOCK_CATEGORIES.find((c) => c.id === categoryId);
+    const category = this.categories().find((c) => c.id === categoryId);
     return category ? `${category.icon} ${category.name}` : 'Sin categoría';
   }
 
@@ -34,12 +46,6 @@ export class ConfirmationStepComponent {
   }
 
   onConfirm(): void {
-    // Log the payload that would be sent to the backend
-    const payload = {
-      profile: this.profileData,
-      services: this.servicesData,
-    };
-    console.log('[ServiPy] Onboarding payload:', payload);
     this.isSubmitted = true;
     this.confirmed.emit();
   }

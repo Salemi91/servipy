@@ -1,5 +1,7 @@
-# Perfil de producción.
-# Todas las propiedades sensibles se leen de variables de entorno.
+# Perfil de PRODUCCIÓN.
+# Todo secreto y cadena de conexión se exige por variable de entorno:
+# los placeholders no tienen valor por defecto, de modo que la aplicación
+# falla al arrancar si falta alguno.
 
 spring:
   datasource:
@@ -8,9 +10,43 @@ spring:
     password: ${DB_PASSWORD}
 
   jpa:
+    # Flyway es el único mecanismo de DDL. Hibernate nunca modifica el esquema.
     hibernate:
       ddl-auto: validate
     show-sql: false
+    open-in-view: false
 
   flyway:
     enabled: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
+logging:
+  level:
+    root: WARN
+    py.com.servipy: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+
+app:
+  cors:
+    allowed-origin: ${CORS_ALLOWED_ORIGIN}
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:30}

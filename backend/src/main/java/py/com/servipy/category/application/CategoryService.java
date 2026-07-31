@@ -7,6 +7,7 @@ import py.com.servipy.category.application.dto.CategoryDto;
 import py.com.servipy.category.application.dto.CreateCategoryRequest;
 import py.com.servipy.category.domain.Category;
 import py.com.servipy.category.infrastructure.persistence.CategoryRepository;
+import py.com.servipy.shared.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -18,6 +19,15 @@ public class CategoryService {
 
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
+    }
+
+    /**
+     * Categoría activa por id, para que otros slices puedan referenciarla
+     * sin acceder a su repositorio.
+     */
+    public Category findActiveEntityById(Long id) {
+        return categoryRepository.findByIdAndActiveTrue(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con id: " + id));
     }
 
     public List<CategoryDto> findAllActive() {

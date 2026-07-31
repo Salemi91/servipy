@@ -4,7 +4,7 @@ export interface CreateServiceRequestPayload {
   phone?: string;
   subject: string;
   description: string;
-  desiredDate?: string; // ISO date string YYYY-MM-DD
+  desiredDate: string; // ISO date string YYYY-MM-DD, obligatoria
 }
 
 export interface CreateServiceRequestResponse {

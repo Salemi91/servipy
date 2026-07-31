@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -16,6 +17,7 @@ import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
   templateUrl: './search-bar.component.html',
 })
 export class SearchBarComponent implements OnInit, OnDestroy {
+  @Input() initialValue = '';
   @Output() searchChanged = new EventEmitter<string>();
 
   searchTerm = '';
@@ -23,6 +25,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
+    this.searchTerm = this.initialValue;
     this.searchSubject
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((term) => this.searchChanged.emit(term));

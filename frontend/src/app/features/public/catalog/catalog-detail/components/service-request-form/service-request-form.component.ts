@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { ServiceRequestService } from '../../../../../professional/requests/services/service-request.service';
+import { ServiceRequestService } from '@core/http/service-request.service';
 import { CreateServiceRequestPayload } from '../../../../../../shared/models/service-request.model';
 import { ErrorResponse } from '../../../../../../shared/models/api-response.model';
 
@@ -36,7 +36,7 @@ export class ServiceRequestFormComponent {
     phone: [''],
     subject: ['', [Validators.required, Validators.maxLength(200)]],
     description: ['', [Validators.required, Validators.maxLength(2000)]],
-    desiredDate: [''],
+    desiredDate: ['', [Validators.required]],
   });
 
   get isSubmitting(): boolean {
@@ -58,14 +58,11 @@ export class ServiceRequestFormComponent {
       email: formValue.email,
       subject: formValue.subject,
       description: formValue.description,
+      desiredDate: formValue.desiredDate,
     };
 
     if (formValue.phone?.trim()) {
       payload.phone = formValue.phone.trim();
-    }
-
-    if (formValue.desiredDate) {
-      payload.desiredDate = formValue.desiredDate;
     }
 
     this.serviceRequestService

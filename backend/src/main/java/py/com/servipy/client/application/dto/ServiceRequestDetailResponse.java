@@ -1,7 +1,6 @@
 package py.com.servipy.client.application.dto;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 public record ServiceRequestDetailResponse(
     Long id,

@@ -1,5 +1,7 @@
 package py.com.servipy.servicerequest.infrastructure.persistence;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import py.com.servipy.servicerequest.domain.RequestStatus;
@@ -11,6 +13,11 @@ import java.util.Optional;
 public interface ServiceRequestRepository extends JpaRepository<ServiceRequest, Long> {
 
     List<ServiceRequest> findByProfessionalIdOrderByCreatedAtDesc(Long professionalId);
+
+    Page<ServiceRequest> findByClientEmailIgnoreCaseOrderByCreatedAtDesc(String clientEmail, Pageable pageable);
+
+    Page<ServiceRequest> findByClientEmailIgnoreCaseAndStatusOrderByCreatedAtDesc(
+        String clientEmail, RequestStatus status, Pageable pageable);
 
     List<ServiceRequest> findByProfessionalIdAndStatusOrderByCreatedAtDesc(Long professionalId, RequestStatus status);
 

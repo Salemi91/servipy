@@ -42,7 +42,7 @@
             [ngClass]="{ 'border-red-400 focus:border-red-500 focus:ring-red-500': hasError(i, 'categoryId') }"
           >
             <option [ngValue]="null" disabled>¿Qué tipo de servicio es?</option>
-            @for (cat of categories; track cat.id) {
+            @for (cat of categories(); track cat.id) {
               <option [ngValue]="cat.id">{{ cat.icon }} {{ cat.name }}</option>
             }
           </select>

@@ -17,6 +17,8 @@ import py.com.servipy.shared.exception.ResourceNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,10 +33,22 @@ public class ProfessionalCatalogService {
     /**
      * Lista profesionales activos y aprobados con filtrado dinámico.
      */
-    public Page<ProfessionalSummaryDto> findAll(Long categoryId, String search, Pageable pageable) {
-        Specification<ProfessionalProfile> spec = ProfessionalSpecification.build(categoryId, search);
+    public Page<ProfessionalSummaryDto> findAll(Long categoryId, Long cityId, String search, Pageable pageable) {
+        Specification<ProfessionalProfile> spec = ProfessionalSpecification.build(categoryId, cityId, search);
         Page<ProfessionalProfile> page = profileRepository.findAll(spec, pageable);
         return page.map(this::toSummaryDto);
+    }
+
+    /**
+     * Cantidad de profesionales visibles en el catálogo por categoría.
+     * Las categorías sin profesionales visibles no aparecen en el mapa.
+     */
+    public Map<Long, Long> countByCategory() {
+        return profileRepository.countActiveProfessionalsByCategory().stream()
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (Long) row[1]
+                ));
     }
 
     /**
@@ -86,8 +100,6 @@ public class ProfessionalCatalogService {
                 p.getId(),
                 p.getUser().getName(),
                 p.getPhotoUrl(),
-                p.getPhone(),
-                p.getWhatsapp(),
                 p.getDescription(),
                 p.getCity() != null ? p.getCity().getName() : null,
                 p.getAvailability().name(),

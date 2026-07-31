@@ -8,8 +8,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import py.com.servipy.auth.application.JwtService;
 import py.com.servipy.category.application.CategoryService;
 import py.com.servipy.category.application.dto.CategoryDto;
 import py.com.servipy.category.infrastructure.web.CategoryController;
@@ -18,6 +20,10 @@ import py.com.servipy.professional.application.dto.ProfessionalDetailDto;
 import py.com.servipy.professional.application.dto.ProfessionalSummaryDto;
 import py.com.servipy.shared.config.SecurityConfig;
 import py.com.servipy.shared.exception.ResourceNotFoundException;
+import py.com.servipy.shared.web.ErrorResponseWriter;
+import py.com.servipy.shared.web.RestAccessDeniedHandler;
+import py.com.servipy.shared.web.RestAuthenticationEntryPoint;
+import py.com.servipy.user.infrastructure.persistence.UserRepository;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,7 +37,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {ProfessionalCatalogController.class, CategoryController.class})
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class, ErrorResponseWriter.class,
+         RestAuthenticationEntryPoint.class, RestAccessDeniedHandler.class})
+@ActiveProfiles("test")
 class ProfessionalCatalogControllerTest {
 
     @Autowired
@@ -43,6 +51,13 @@ class ProfessionalCatalogControllerTest {
     @MockBean
     private CategoryService categoryService;
 
+    // Colaboradores del filtro JWT importado con SecurityConfig
+    @MockBean
+    private JwtService jwtService;
+
+    @MockBean
+    private UserRepository userRepository;
+
     @Test
     void should_return200_when_getProfessionalsWithoutAuth() throws Exception {
         ProfessionalSummaryDto summary = new ProfessionalSummaryDto(
@@ -51,7 +66,7 @@ class ProfessionalCatalogControllerTest {
                 new BigDecimal("150000"), "PRESENCIAL", null
         );
         Page<ProfessionalSummaryDto> page = new PageImpl<>(List.of(summary));
-        when(catalogService.findAll(isNull(), isNull(), any(Pageable.class))).thenReturn(page);
+        when(catalogService.findAll(isNull(), isNull(), isNull(), any(Pageable.class))).thenReturn(page);
 
         mockMvc.perform(get("/api/v1/professionals"))
                 .andExpect(status().isOk())
@@ -80,6 +95,21 @@ class ProfessionalCatalogControllerTest {
         mockMvc.perform(get("/api/v1/professionals/abc"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("INVALID_PARAMETER"));
+    }
+
+    @Test
+    void should_omitContactData_when_getProfessionalDetailPublicly() throws Exception {
+        ProfessionalDetailDto detail = new ProfessionalDetailDto(
+                1L, "Juan Pérez", null, "Profesional con experiencia",
+                "Asunción", "PRESENCIAL", List.of()
+        );
+        when(catalogService.findById(1L)).thenReturn(detail);
+
+        mockMvc.perform(get("/api/v1/professionals/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Juan Pérez"))
+                .andExpect(jsonPath("$.phone").doesNotExist())
+                .andExpect(jsonPath("$.whatsapp").doesNotExist());
     }
 
     @Test

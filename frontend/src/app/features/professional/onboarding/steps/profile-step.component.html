@@ -87,7 +87,7 @@
       [ngClass]="{ 'border-red-400 focus:border-red-500 focus:ring-red-500': hasError('city') }"
     >
       <option value="" disabled>Seleccioná tu ciudad</option>
-      @for (city of cities; track city.id) {
+      @for (city of cities(); track city.id) {
         <option [value]="city.id">{{ city.name }}</option>
       }
     </select>

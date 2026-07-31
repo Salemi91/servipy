@@ -17,6 +17,7 @@ import { ClientProfile, ProfileUpdateRequest } from '../models/client-profile.mo
       <!-- Notification -->
       @if (notification()) {
         <div
+          [attr.role]="notification()!.type === 'success' ? 'status' : 'alert'"
           [class]="notification()!.type === 'success'
             ? 'text-sm text-green-600 bg-green-50 border border-green-200 rounded-md p-3 mb-4'
             : 'text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-3 mb-4'"

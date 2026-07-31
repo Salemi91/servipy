@@ -17,11 +17,12 @@ public final class ProfessionalSpecification {
     private ProfessionalSpecification() {
     }
 
-    public static Specification<ProfessionalProfile> build(Long categoryId, String search) {
+    public static Specification<ProfessionalProfile> build(Long categoryId, Long cityId, String search) {
         return Specification.where(isApproved())
                 .and(userIsActive())
                 .and(hasActiveServices())
                 .and(inCategory(categoryId))
+                .and(inCity(cityId))
                 .and(matchesSearch(search));
     }
 
@@ -63,6 +64,11 @@ public final class ProfessionalSpecification {
                     );
             return cb.exists(subquery);
         };
+    }
+
+    private static Specification<ProfessionalProfile> inCity(Long cityId) {
+        if (cityId == null) return null;
+        return (root, query, cb) -> cb.equal(root.get("city").get("id"), cityId);
     }
 
     private static Specification<ProfessionalProfile> matchesSearch(String search) {

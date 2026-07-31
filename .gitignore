@@ -40,6 +40,9 @@ package-lock.json.bak
 # ========================
 # Variables de entorno y secretos
 # ========================
+.env
+.env.local
+.env.production
 *.env
 .env.*
 !.env.example

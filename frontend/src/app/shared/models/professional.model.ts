@@ -10,12 +10,14 @@ export interface ProfessionalSummary {
   photoUrl: string | null;
 }
 
+/**
+ * Detalle público del profesional. Sin datos de contacto: se obtienen
+ * desde la solicitud del cliente cuando está ACCEPTED.
+ */
 export interface ProfessionalDetail {
   id: number;
   name: string;
   photoUrl: string | null;
-  phone: string;
-  whatsapp: string | null;
   description: string;
   cityName: string;
   availability: string;
@@ -47,18 +49,6 @@ export interface OfferedServiceForm {
   name: string;
   description: string;
   price: number;
-}
-
-export interface CategoryOption {
-  id: number;
-  name: string;
-  icon: string;
-  description: string;
-}
-
-export interface CityOption {
-  id: number;
-  name: string;
 }
 
 export interface ProfessionalProfileStatus {

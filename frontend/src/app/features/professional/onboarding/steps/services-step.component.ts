@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { CategoryOption, OfferedServiceForm } from '../../../../shared/models/professional.model';
-import { MOCK_CATEGORIES, SERVICE_NAME_SUGGESTIONS } from '../mock-data';
+import { OfferedServiceForm } from '../../../../shared/models/professional.model';
+import { Category } from '../../../../shared/models/category.model';
+import { ReferenceDataService } from '../../../../core/services/reference-data.service';
+import { suggestionsForCategory } from '../service-name-suggestions';
 
 @Component({
   selector: 'app-services-step',
@@ -15,13 +17,18 @@ export class ServicesStepComponent implements OnInit {
   @Output() stepCompleted = new EventEmitter<OfferedServiceForm[]>();
   @Output() goBack = new EventEmitter<void>();
 
+  private readonly referenceData = inject(ReferenceDataService);
+
   form!: FormGroup;
-  categories: CategoryOption[] = MOCK_CATEGORIES;
+  categories = signal<Category[]>([]);
+  categoriesError = signal(false);
   maxServices = 10;
 
   private fb = new FormBuilder();
 
   ngOnInit(): void {
+    this.loadCategories();
+
     this.form = this.fb.group({
       services: this.fb.array([]),
     });
@@ -58,20 +65,24 @@ export class ServicesStepComponent implements OnInit {
   }
 
   getNamePlaceholder(index: number): string {
-    const categoryId = this.services.at(index).get('categoryId')?.value;
-    if (categoryId && SERVICE_NAME_SUGGESTIONS[categoryId]) {
-      const suggestions = SERVICE_NAME_SUGGESTIONS[categoryId];
-      return `Ej: ${suggestions[0]}`;
-    }
-    return 'Ej: Instalación de tomacorrientes';
+    const suggestions = this.getNameSuggestions(index);
+    return suggestions.length > 0 ? `Ej: ${suggestions[0]}` : 'Ej: Instalación de tomacorrientes';
   }
 
   getNameSuggestions(index: number): string[] {
     const categoryId = this.services.at(index).get('categoryId')?.value;
-    if (categoryId && SERVICE_NAME_SUGGESTIONS[categoryId]) {
-      return SERVICE_NAME_SUGGESTIONS[categoryId];
-    }
-    return [];
+    const category = this.categories().find((c) => c.id === Number(categoryId));
+    return suggestionsForCategory(category?.name);
+  }
+
+  private loadCategories(): void {
+    this.referenceData.getCategories().subscribe({
+      next: (categories) => {
+        this.categories.set(categories);
+        this.categoriesError.set(false);
+      },
+      error: () => this.categoriesError.set(true),
+    });
   }
 
   onCategoryChange(index: number): void {

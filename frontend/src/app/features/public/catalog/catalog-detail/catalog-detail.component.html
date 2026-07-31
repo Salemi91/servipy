@@ -57,25 +57,8 @@
         </div>
       </div>
 
-      <!-- Contact -->
-      <div class="mt-4 flex flex-wrap gap-3">
-        <a
-          *ngIf="pro.phone"
-          [href]="'tel:' + pro.phone"
-          class="min-h-[44px] min-w-[44px] inline-flex items-center gap-1 rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-        >
-          📞 {{ pro.phone }}
-        </a>
-        <a
-          *ngIf="pro.whatsapp"
-          [href]="'https://wa.me/' + pro.whatsapp"
-          target="_blank"
-          rel="noopener"
-          class="min-h-[44px] min-w-[44px] inline-flex items-center gap-1 rounded-lg bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700"
-        >
-          WhatsApp
-        </a>
-      </div>
+      <!-- Los datos de contacto se entregan al cliente cuando el profesional
+           acepta su solicitud, no en el perfil público. -->
 
       <!-- Description -->
       <div class="mt-6">

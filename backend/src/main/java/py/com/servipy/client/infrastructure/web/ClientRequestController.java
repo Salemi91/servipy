@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import py.com.servipy.client.application.ClientRequestService;
+import py.com.servipy.client.application.dto.ProfessionalContactResponse;
 import py.com.servipy.client.application.dto.ServiceRequestDetailResponse;
 import py.com.servipy.client.application.dto.ServiceRequestPageResponse;
 import py.com.servipy.user.domain.User;
@@ -61,6 +62,21 @@ public class ClientRequestController {
             @PathVariable Long id) {
 
         ServiceRequestDetailResponse response = clientRequestService.getRequestDetail(id, user.getEmail());
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * GET /api/v1/client/requests/{id}/contact
+     * Retorna los datos de contacto del profesional. Disponible solo si la
+     * solicitud pertenece al cliente autenticado y está ACCEPTED.
+     */
+    @GetMapping("/{id}/contact")
+    public ResponseEntity<ProfessionalContactResponse> getProfessionalContact(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+
+        ProfessionalContactResponse response =
+            clientRequestService.getProfessionalContact(id, user.getEmail());
         return ResponseEntity.ok(response);
     }
 }

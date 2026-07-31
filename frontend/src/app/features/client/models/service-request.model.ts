@@ -1,8 +1,10 @@
+export type RequestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
+
 export interface ServiceRequest {
   id: number;
   serviceName: string;
   professionalName: string;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED' | 'CANCELLED';
+  status: RequestStatus;
   createdAt: string;
   updatedAt: string;
 }
@@ -13,9 +15,18 @@ export interface ServiceRequestDetail {
   subject: string;
   description: string;
   desiredDate: string | null;
-  status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED' | 'CANCELLED';
+  status: RequestStatus;
   createdAt: string;
   updatedAt: string;
+}
+
+/**
+ * Datos de contacto del profesional. Disponibles solo cuando la solicitud está ACCEPTED.
+ */
+export interface ProfessionalContact {
+  professionalName: string;
+  phone: string;
+  whatsapp: string | null;
 }
 
 export interface PaginatedResponse<T> {

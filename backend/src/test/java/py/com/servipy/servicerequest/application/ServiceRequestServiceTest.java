@@ -42,6 +42,8 @@ class ServiceRequestServiceTest {
     @InjectMocks
     private ServiceRequestService service;
 
+    private static final Long AUTHENTICATED_USER_ID = 100L;
+
     // --- 6.1 Probar solicitud válida ---
 
     @Test
@@ -132,11 +134,13 @@ class ServiceRequestServiceTest {
         ServiceRequest req1 = buildServiceRequest(1L, professionalId, "Cliente A", "Asunto A", RequestStatus.PENDING);
         ServiceRequest req2 = buildServiceRequest(2L, professionalId, "Cliente B", "Asunto B", RequestStatus.ACCEPTED);
 
+        stubOwnership(professionalId);
         when(requestRepository.findByProfessionalIdOrderByCreatedAtDesc(professionalId))
             .thenReturn(List.of(req1, req2));
 
         // Act
-        List<ServiceRequestSummaryDto> result = service.findByProfessional(professionalId, null);
+        List<ServiceRequestSummaryDto> result = service.findByProfessional(
+            professionalId, AUTHENTICATED_USER_ID, null);
 
         // Assert
         assertEquals(2, result.size());
@@ -156,11 +160,12 @@ class ServiceRequestServiceTest {
         request.setClientEmail("maria@example.com");
         request.setDescription("Descripción de prueba");
 
+        stubOwnership(professionalId);
         when(requestRepository.findByIdAndProfessionalId(requestId, professionalId))
             .thenReturn(Optional.of(request));
 
         // Act
-        ServiceRequestDetailDto detail = service.findDetail(professionalId, requestId);
+        ServiceRequestDetailDto detail = service.findDetail(professionalId, AUTHENTICATED_USER_ID, requestId);
 
         // Assert
         assertNotNull(detail);
@@ -175,13 +180,14 @@ class ServiceRequestServiceTest {
         // Arrange
         Long professionalId = 1L;
         Long requestId = 999L;
+        stubOwnership(professionalId);
         when(requestRepository.findByIdAndProfessionalId(requestId, professionalId))
             .thenReturn(Optional.empty());
 
         // Act & Assert
         ResourceNotFoundException ex = assertThrows(
             ResourceNotFoundException.class,
-            () -> service.findDetail(professionalId, requestId)
+            () -> service.findDetail(professionalId, AUTHENTICATED_USER_ID, requestId)
         );
         assertEquals("Solicitud no encontrada", ex.getMessage());
     }
@@ -190,19 +196,62 @@ class ServiceRequestServiceTest {
     void should_throw404_when_requestBelongsToOtherProfessional() {
         // Arrange
         Long professionalId = 1L;
-        Long otherProfessionalId = 2L;
         Long requestId = 5L;
 
         // The request belongs to professional 2, but we query with professional 1
+        stubOwnership(professionalId);
         when(requestRepository.findByIdAndProfessionalId(requestId, professionalId))
             .thenReturn(Optional.empty());
 
         // Act & Assert
         ResourceNotFoundException ex = assertThrows(
             ResourceNotFoundException.class,
-            () -> service.findDetail(professionalId, requestId)
+            () -> service.findDetail(professionalId, AUTHENTICATED_USER_ID, requestId)
         );
         assertEquals("Solicitud no encontrada", ex.getMessage());
+    }
+
+    // --- Aislamiento por profesional autenticado ---
+
+    @Test
+    void should_throw404_when_professionalIdIsNotOwnedByAuthenticatedUser() {
+        // Arrange: el usuario autenticado es dueño del perfil 1, pero consulta el perfil 2
+        Long foreignProfessionalId = 2L;
+        stubOwnership(1L);
+
+        // Act & Assert
+        ResourceNotFoundException ex = assertThrows(
+            ResourceNotFoundException.class,
+            () -> service.findByProfessional(foreignProfessionalId, AUTHENTICATED_USER_ID, null)
+        );
+        assertEquals("Solicitud no encontrada", ex.getMessage());
+        verify(requestRepository, never()).findByProfessionalIdOrderByCreatedAtDesc(any());
+    }
+
+    @Test
+    void should_throw404_when_authenticatedUserHasNoProfessionalProfile() {
+        // Arrange
+        when(professionalRepository.findByUserId(AUTHENTICATED_USER_ID)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(
+            ResourceNotFoundException.class,
+            () -> service.findDetail(1L, AUTHENTICATED_USER_ID, 5L)
+        );
+        verify(requestRepository, never()).findByIdAndProfessionalId(any(), any());
+    }
+
+    @Test
+    void should_throw404_when_changingStatusOfForeignProfessional() {
+        // Arrange
+        stubOwnership(1L);
+
+        // Act & Assert
+        assertThrows(
+            ResourceNotFoundException.class,
+            () -> service.changeStatus(2L, AUTHENTICATED_USER_ID, 5L, RequestStatus.ACCEPTED)
+        );
+        verify(requestRepository, never()).save(any());
     }
 
     // --- 6.6 Probar aceptación ---
@@ -214,12 +263,13 @@ class ServiceRequestServiceTest {
         Long requestId = 5L;
         ServiceRequest request = buildServiceRequest(requestId, professionalId, "Carlos", "Pintura", RequestStatus.PENDING);
 
+        stubOwnership(professionalId);
         when(requestRepository.findByIdAndProfessionalId(requestId, professionalId))
             .thenReturn(Optional.of(request));
         when(requestRepository.save(any(ServiceRequest.class))).thenReturn(request);
 
         // Act
-        service.changeStatus(professionalId, requestId, RequestStatus.ACCEPTED);
+        service.changeStatus(professionalId, AUTHENTICATED_USER_ID, requestId, RequestStatus.ACCEPTED);
 
         // Assert
         assertEquals(RequestStatus.ACCEPTED, request.getStatus());
@@ -235,12 +285,13 @@ class ServiceRequestServiceTest {
         Long requestId = 5L;
         ServiceRequest request = buildServiceRequest(requestId, professionalId, "Ana", "Electricidad", RequestStatus.PENDING);
 
+        stubOwnership(professionalId);
         when(requestRepository.findByIdAndProfessionalId(requestId, professionalId))
             .thenReturn(Optional.of(request));
         when(requestRepository.save(any(ServiceRequest.class))).thenReturn(request);
 
         // Act
-        service.changeStatus(professionalId, requestId, RequestStatus.REJECTED);
+        service.changeStatus(professionalId, AUTHENTICATED_USER_ID, requestId, RequestStatus.REJECTED);
 
         // Assert
         assertEquals(RequestStatus.REJECTED, request.getStatus());
@@ -256,13 +307,14 @@ class ServiceRequestServiceTest {
         Long requestId = 5L;
         ServiceRequest request = buildServiceRequest(requestId, professionalId, "Pedro", "Plomería", RequestStatus.ACCEPTED);
 
+        stubOwnership(professionalId);
         when(requestRepository.findByIdAndProfessionalId(requestId, professionalId))
             .thenReturn(Optional.of(request));
 
         // Act & Assert
         assertThrows(
             InvalidStateTransitionException.class,
-            () -> service.changeStatus(professionalId, requestId, RequestStatus.REJECTED)
+            () -> service.changeStatus(professionalId, AUTHENTICATED_USER_ID, requestId, RequestStatus.REJECTED)
         );
         verify(requestRepository, never()).save(any());
     }
@@ -274,18 +326,28 @@ class ServiceRequestServiceTest {
         Long requestId = 5L;
         ServiceRequest request = buildServiceRequest(requestId, professionalId, "Luis", "Limpieza", RequestStatus.REJECTED);
 
+        stubOwnership(professionalId);
         when(requestRepository.findByIdAndProfessionalId(requestId, professionalId))
             .thenReturn(Optional.of(request));
 
         // Act & Assert
         assertThrows(
             InvalidStateTransitionException.class,
-            () -> service.changeStatus(professionalId, requestId, RequestStatus.ACCEPTED)
+            () -> service.changeStatus(professionalId, AUTHENTICATED_USER_ID, requestId, RequestStatus.ACCEPTED)
         );
         verify(requestRepository, never()).save(any());
     }
 
     // --- Helper methods ---
+
+    /**
+     * El usuario autenticado es dueño del perfil profesional indicado.
+     */
+    private void stubOwnership(Long ownedProfessionalId) {
+        ProfessionalProfile ownProfile = new ProfessionalProfile();
+        ownProfile.setId(ownedProfessionalId);
+        when(professionalRepository.findByUserId(AUTHENTICATED_USER_ID)).thenReturn(Optional.of(ownProfile));
+    }
 
     private ProfessionalProfile buildActiveProfessional(Long id) {
         return buildProfessional(id, true, ApprovalStatus.APPROVED);

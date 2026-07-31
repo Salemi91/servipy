@@ -1,27 +1,88 @@
 <div class="flex min-h-screen flex-col">
   <!-- Header -->
-  <header class="bg-white shadow-sm">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-      <a routerLink="/" class="flex items-center gap-2">
-        <img src="/images/logo.png" alt="ServiPy" class="h-14 w-auto" />
+  <header class="sticky top-0 z-10 border-b bg-white shadow-sm">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
+      <a routerLink="/" class="flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded">
+        <img src="/images/logo.png" alt="ServiPy" class="h-10 w-auto sm:h-14" />
       </a>
-      <nav class="flex items-center space-x-4">
+
+      <nav aria-label="Navegación principal" class="flex items-center gap-1 sm:gap-2">
+        <a
+          routerLink="/profesionales"
+          routerLinkActive="bg-indigo-50 text-indigo-700"
+          ariaCurrentWhenActive="page"
+          class="hidden min-h-[44px] items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:inline-flex"
+        >
+          Explorar catálogo
+        </a>
+
         @if (authService.currentUser()) {
           @if (authService.getUserRole() === 'CLIENT') {
-            <a routerLink="/client/requests" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Mi Panel</a>
+            <a
+              routerLink="/client/requests"
+              routerLinkActive="bg-indigo-50 text-indigo-700"
+              ariaCurrentWhenActive="page"
+              class="flex min-h-[44px] items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Mi Panel
+            </a>
           }
           @if (authService.getUserRole() === 'PROFESSIONAL') {
-            <a routerLink="/professional" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Mi Panel</a>
+            <a
+              routerLink="/professional"
+              routerLinkActive="bg-indigo-50 text-indigo-700"
+              ariaCurrentWhenActive="page"
+              class="flex min-h-[44px] items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Mi Panel
+            </a>
           }
-          <span class="text-sm text-gray-600">{{ authService.currentUser()?.name }}</span>
+          @if (authService.getUserRole() === 'ADMIN') {
+            <a
+              routerLink="/admin"
+              routerLinkActive="bg-indigo-50 text-indigo-700"
+              ariaCurrentWhenActive="page"
+              class="flex min-h-[44px] items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z" />
+              </svg>
+              Panel Admin
+            </a>
+          }
+          <span class="hidden px-2 text-sm text-gray-600 sm:inline">{{ authService.currentUser()?.name }}</span>
           <button
+            type="button"
             (click)="authService.logout()"
-            class="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200">
+            class="min-h-[44px] rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
             Salir
           </button>
         } @else {
-          <a routerLink="/login" class="text-sm font-medium text-gray-600 hover:text-indigo-600">Iniciar sesión</a>
-          <a routerLink="/register" class="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">Registrarse</a>
+          @if (authService.getUserRole() !== 'PROFESSIONAL') {
+            <a
+              routerLink="/register"
+              [queryParams]="{ as: 'professional' }"
+              class="hidden min-h-[44px] items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:inline-flex"
+            >
+              Soy Profesional
+            </a>
+          }
+          <a
+            routerLink="/login"
+            routerLinkActive="bg-indigo-50 text-indigo-700"
+            ariaCurrentWhenActive="page"
+            class="flex min-h-[44px] items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            Iniciar sesión
+          </a>
+          <a
+            routerLink="/register"
+            class="flex min-h-[44px] items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            Registrarse
+          </a>
         }
       </nav>
     </div>

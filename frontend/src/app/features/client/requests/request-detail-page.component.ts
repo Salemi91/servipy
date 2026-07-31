@@ -3,7 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { ClientRequestService } from '../services/client-request.service';
-import { ServiceRequestDetail } from '../models/service-request.model';
+import { ProfessionalContact, ServiceRequestDetail } from '../models/service-request.model';
 import { RequestStatusBadgeComponent } from './request-status-badge.component';
 
 type PageState = 'loading' | 'loaded' | 'error' | 'not-found';
@@ -79,6 +79,27 @@ type PageState = 'loading' | 'loaded' | 'error' | 'not-found';
               </div>
             }
 
+            @if (detail()!.status === 'ACCEPTED') {
+              <div class="pt-4 border-t border-gray-100">
+                <p class="text-sm font-medium text-gray-500 mb-2">Contacto</p>
+
+                @if (contact()) {
+                  <a
+                    [href]="whatsappLink()"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                  >
+                    Contactar por WhatsApp a {{ contact()!.professionalName }}
+                  </a>
+                } @else if (contactError()) {
+                  <p class="text-sm text-red-600" role="alert">
+                    No se pudieron obtener los datos de contacto.
+                  </p>
+                }
+              </div>
+            }
+
             <div class="flex gap-8 pt-4 border-t border-gray-100">
               <div>
                 <p class="text-xs text-gray-400">Creado</p>
@@ -101,8 +122,21 @@ export class RequestDetailPageComponent implements OnInit {
 
   state = signal<PageState>('loading');
   detail = signal<ServiceRequestDetail | null>(null);
+  contact = signal<ProfessionalContact | null>(null);
+  contactError = signal(false);
 
   private requestId = 0;
+
+  /**
+   * Enlace de WhatsApp al profesional. Solo se construye con los datos
+   * de contacto, que el backend entrega únicamente si la solicitud está ACCEPTED.
+   */
+  whatsappLink(): string {
+    const current = this.contact();
+    if (!current) return '';
+    const number = (current.whatsapp ?? current.phone).replace(/\D/g, '');
+    return `https://wa.me/${number}`;
+  }
 
   ngOnInit(): void {
     this.requestId = Number(this.route.snapshot.paramMap.get('id'));
@@ -119,6 +153,9 @@ export class RequestDetailPageComponent implements OnInit {
       next: (res) => {
         this.detail.set(res);
         this.state.set('loaded');
+        if (res.status === 'ACCEPTED') {
+          this.loadContact();
+        }
       },
       error: (err) => {
         if (err.status === 404) {
@@ -127,6 +164,14 @@ export class RequestDetailPageComponent implements OnInit {
           this.state.set('error');
         }
       },
+    });
+  }
+
+  private loadContact(): void {
+    this.contactError.set(false);
+    this.clientRequestService.getProfessionalContact(this.requestId).subscribe({
+      next: (res) => this.contact.set(res),
+      error: () => this.contactError.set(true),
     });
   }
 }

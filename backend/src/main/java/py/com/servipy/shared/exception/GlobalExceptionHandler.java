@@ -15,6 +15,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import py.com.servipy.client.application.exception.ContactNotAvailableException;
+import py.com.servipy.professional.application.exception.ProfileAlreadyExistsException;
 import py.com.servipy.client.application.exception.FileTooLargeException;
 import py.com.servipy.client.application.exception.InvalidCurrentPasswordException;
 import py.com.servipy.client.application.exception.InvalidFileTypeException;
@@ -186,6 +188,26 @@ public class GlobalExceptionHandler {
             "No se pudo almacenar la imagen"
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(ProfileAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleProfileAlreadyExists(ProfileAlreadyExistsException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.CONFLICT,
+            "DUPLICATE_RESOURCE",
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(ContactNotAvailableException.class)
+    public ResponseEntity<ErrorResponse> handleContactNotAvailable(ContactNotAvailableException ex) {
+        ErrorResponse response = buildError(
+            HttpStatus.CONFLICT,
+            "CONTACT_NOT_AVAILABLE",
+            ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(InvalidCurrentPasswordException.class)

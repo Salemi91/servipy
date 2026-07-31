@@ -1,5 +1,5 @@
 # Perfil para tests automatizados.
-# Usa H2 en memoria para no depender de MySQL externo.
+# H2 en memoria: no depende de MySQL ni de variables de entorno externas.
 
 spring:
   datasource:
@@ -17,3 +17,15 @@ spring:
 
   flyway:
     enabled: false
+
+logging:
+  level:
+    py.com.servipy: DEBUG
+
+app:
+  cors:
+    allowed-origin: http://localhost:4200
+  jwt:
+    # Secreto fijo de test: mantiene los tests deterministas y sin dependencias del entorno.
+    secret: servipy-test-secret-key-for-automated-tests-min-32-bytes
+    expiration-minutes: 30

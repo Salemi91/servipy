@@ -3,7 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { timeout } from 'rxjs';
 import { API_BASE_URL } from '../../../core/config/api.config';
-import { ServiceRequest, ServiceRequestDetail, PaginatedResponse } from '../models/service-request.model';
+import {
+  ServiceRequest,
+  ServiceRequestDetail,
+  ProfessionalContact,
+  PaginatedResponse,
+} from '../models/service-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class ClientRequestService {
@@ -30,6 +35,16 @@ export class ClientRequestService {
   getRequestDetail(id: number): Observable<ServiceRequestDetail> {
     return this.http.get<ServiceRequestDetail>(
       `${this.baseUrl}/client/requests/${id}`
+    ).pipe(timeout(this.TIMEOUT_MS));
+  }
+
+  /**
+   * Datos de contacto del profesional. El backend solo los entrega
+   * si la solicitud pertenece al cliente y está ACCEPTED.
+   */
+  getProfessionalContact(id: number): Observable<ProfessionalContact> {
+    return this.http.get<ProfessionalContact>(
+      `${this.baseUrl}/client/requests/${id}/contact`
     ).pipe(timeout(this.TIMEOUT_MS));
   }
 }

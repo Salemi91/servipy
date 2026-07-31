@@ -42,6 +42,7 @@ class ProfessionalCatalogServiceTest {
     @Mock
     private ProfessionalProfileRepository profileRepository;
 
+
     @InjectMocks
     private ProfessionalCatalogService catalogService;
 
@@ -98,7 +99,7 @@ class ProfessionalCatalogServiceTest {
         Page<ProfessionalProfile> page = new PageImpl<>(List.of(approvedProfile), pageable, 1);
         when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, null, pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, null, null, pageable);
 
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).name()).isEqualTo("Juan Pérez");
@@ -111,9 +112,22 @@ class ProfessionalCatalogServiceTest {
         Page<ProfessionalProfile> page = new PageImpl<>(List.of(approvedProfile), pageable, 1);
         when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(1L, null, pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(1L, null, null, pageable);
 
         assertThat(result.getContent()).hasSize(1);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void should_filterByCity_when_cityIdProvided() {
+        Pageable pageable = PageRequest.of(0, 12);
+        Page<ProfessionalProfile> page = new PageImpl<>(List.of(approvedProfile), pageable, 1);
+        when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
+
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, 5L, null, pageable);
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).cityName()).isEqualTo("Asunción");
     }
 
     @Test
@@ -123,7 +137,7 @@ class ProfessionalCatalogServiceTest {
         Page<ProfessionalProfile> page = new PageImpl<>(List.of(), pageable, 0);
         when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(999L, null, pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(999L, null, null, pageable);
 
         assertThat(result.getContent()).isEmpty();
     }
@@ -135,7 +149,7 @@ class ProfessionalCatalogServiceTest {
         Page<ProfessionalProfile> page = new PageImpl<>(List.of(approvedProfile), pageable, 1);
         when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, "electricista", pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, null, "electricista", pageable);
 
         assertThat(result.getContent()).hasSize(1);
     }
@@ -147,7 +161,7 @@ class ProfessionalCatalogServiceTest {
         Page<ProfessionalProfile> page = new PageImpl<>(List.of(approvedProfile), pageable, 1);
         when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(1L, "electricista", pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(1L, null, "electricista", pageable);
 
         assertThat(result.getContent()).hasSize(1);
     }
@@ -159,7 +173,7 @@ class ProfessionalCatalogServiceTest {
         Page<ProfessionalProfile> page = new PageImpl<>(List.of(approvedProfile), pageable, 1);
         when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, "   ", pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, null, "   ", pageable);
 
         assertThat(result.getContent()).hasSize(1);
     }
@@ -172,10 +186,33 @@ class ProfessionalCatalogServiceTest {
 
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.name()).isEqualTo("Juan Pérez");
-        assertThat(result.phone()).isEqualTo("+595981123456");
         assertThat(result.cityName()).isEqualTo("Asunción");
         assertThat(result.services()).hasSize(1);
         assertThat(result.services().get(0).name()).isEqualTo("Instalación eléctrica");
+    }
+
+    @Test
+    void should_returnCountsByCategory_when_categoriesHaveVisibleProfessionals() {
+        when(profileRepository.countActiveProfessionalsByCategory())
+            .thenReturn(List.of(
+                new Object[]{1L, 3L},
+                new Object[]{2L, 1L}
+            ));
+
+        var result = catalogService.countByCategory();
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(
+            java.util.Map.of(1L, 3L, 2L, 1L)
+        );
+    }
+
+    @Test
+    void should_returnEmptyMap_when_noCategoryHasVisibleProfessionals() {
+        when(profileRepository.countActiveProfessionalsByCategory()).thenReturn(List.of());
+
+        var result = catalogService.countByCategory();
+
+        assertThat(result).isEmpty();
     }
 
     @Test
@@ -205,7 +242,7 @@ class ProfessionalCatalogServiceTest {
         Page<ProfessionalProfile> page = new PageImpl<>(List.of(approvedProfile), pageable, 1);
         when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, null, pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, null, null, pageable);
 
         String description = result.getContent().get(0).description();
         assertThat(description).hasSize(150);
@@ -241,7 +278,7 @@ class ProfessionalCatalogServiceTest {
         Page<ProfessionalProfile> page = new PageImpl<>(List.of(approvedProfile), pageable, 1);
         when(profileRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(page);
 
-        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, null, pageable);
+        Page<ProfessionalSummaryDto> result = catalogService.findAll(null, null, null, pageable);
 
         assertThat(result.getContent().get(0).referencePrice())
                 .isEqualByComparingTo(new BigDecimal("50000"));

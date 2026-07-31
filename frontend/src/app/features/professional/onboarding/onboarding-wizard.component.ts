@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable, concatMap, from, of, toArray } from 'rxjs';
 import { ProgressBarComponent } from './components/progress-bar.component';
 import { ProfileStepComponent } from './steps/profile-step.component';
 import { ServicesStepComponent } from './steps/services-step.component';
@@ -49,24 +50,44 @@ export class OnboardingWizardComponent {
     this.goToStep(2);
   }
 
+  /**
+   * Persiste el perfil y, a continuación, el tarifario recopilado en el paso 2.
+   * Sin servicios activos el profesional no aparece en el catálogo, por lo que
+   * ambos pasos forman una sola operación desde la perspectiva del usuario.
+   */
   onConfirmed(): void {
     if (!this.profileData) return;
 
     this.submitting.set(true);
     this.submitError.set(null);
 
-    this.profileApi.createProfile(this.profileData).subscribe({
-      next: () => {
-        this.submitting.set(false);
-        // Profile created successfully — redirect to professional dashboard
-        this.router.navigate(['/professional']);
-      },
-      error: (err) => {
-        this.submitting.set(false);
-        const message = err?.error?.message || 'Error al crear el perfil. Intente nuevamente.';
-        this.submitError.set(message);
-      },
-    });
+    this.profileApi
+      .createProfile(this.profileData)
+      .pipe(concatMap(() => this.persistServices()))
+      .subscribe({
+        next: () => {
+          this.submitting.set(false);
+          this.router.navigate(['/professional']);
+        },
+        error: (err) => {
+          this.submitting.set(false);
+          const message = err?.error?.message || 'Error al crear el perfil. Intente nuevamente.';
+          this.submitError.set(message);
+        },
+      });
+  }
+
+  private persistServices(): Observable<unknown> {
+    const services = this.servicesData ?? [];
+    if (services.length === 0) {
+      return of(null);
+    }
+
+    // Secuencial: el backend valida cada servicio y el primer error aborta el resto.
+    return from(services).pipe(
+      concatMap((service) => this.profileApi.createService(service)),
+      toArray()
+    );
   }
 
   private goToStep(step: number): void {

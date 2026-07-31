@@ -2,6 +2,7 @@ package py.com.servipy.servicerequest.infrastructure.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -17,8 +22,11 @@ import py.com.servipy.servicerequest.application.dto.CreateServiceRequestRespons
 import py.com.servipy.shared.exception.GlobalExceptionHandler;
 import py.com.servipy.shared.exception.InvalidStateTransitionException;
 import py.com.servipy.shared.exception.ResourceNotFoundException;
+import py.com.servipy.user.domain.Role;
+import py.com.servipy.user.domain.User;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -45,13 +53,32 @@ class ServiceRequestControllerTest {
 
     private static final String BASE_URL = "/api/v1/professionals/1/service-requests";
 
+    private static final Long AUTHENTICATED_USER_ID = 100L;
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
             .setControllerAdvice(new GlobalExceptionHandler())
+            .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
             .build();
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+
+        authenticateProfessional();
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
+    private void authenticateProfessional() {
+        User professional = new User("Roberto Silva", "roberto@example.com", "hash", Role.PROFESSIONAL);
+        professional.setId(AUTHENTICATED_USER_ID);
+
+        SecurityContextHolder.getContext().setAuthentication(
+            new UsernamePasswordAuthenticationToken(
+                professional, null, List.of(new SimpleGrantedAuthority("ROLE_PROFESSIONAL"))));
     }
 
     // --- 6.2 Probar campos inválidos ---
@@ -101,6 +128,37 @@ class ServiceRequestControllerTest {
             .andExpect(jsonPath("$.errors[0].field").value("description"));
     }
 
+    @Test
+    void should_return400_when_desiredDateMissing() throws Exception {
+        // Arrange
+        Map<String, Object> payload = buildValidPayload();
+        payload.remove("desiredDate");
+
+        // Act & Assert
+        mockMvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(payload)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+            .andExpect(jsonPath("$.errors[0].field").value("desiredDate"))
+            .andExpect(jsonPath("$.errors[0].message").value("La fecha preferida es requerida"));
+    }
+
+    @Test
+    void should_return400_when_desiredDateIsInThePast() throws Exception {
+        // Arrange
+        Map<String, Object> payload = buildValidPayload();
+        payload.put("desiredDate", "2020-01-01");
+
+        // Act & Assert
+        mockMvc.perform(post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(payload)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+            .andExpect(jsonPath("$.errors[0].field").value("desiredDate"));
+    }
+
     // --- Additional controller tests for HTTP status coverage ---
 
     @Test
@@ -139,7 +197,7 @@ class ServiceRequestControllerTest {
         Map<String, Object> statusPayload = Map.of("status", "ACCEPTED");
 
         doThrow(new InvalidStateTransitionException("No se puede cambiar de ACCEPTED a ACCEPTED"))
-            .when(service).changeStatus(eq(1L), eq(5L), any());
+            .when(service).changeStatus(eq(1L), eq(AUTHENTICATED_USER_ID), eq(5L), any());
 
         // Act & Assert
         mockMvc.perform(patch(statusUrl)
@@ -158,7 +216,7 @@ class ServiceRequestControllerTest {
         payload.put("phone", "0981123456");
         payload.put("subject", "Reparación de cañería");
         payload.put("description", "Necesito reparar la cañería del baño");
-        payload.put("desiredDate", "2025-02-15");
+        payload.put("desiredDate", "2027-02-15");
         return payload;
     }
 }

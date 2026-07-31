@@ -34,4 +34,20 @@ public interface ProfessionalProfileRepository extends JpaRepository<Professiona
     List<ProfessionalProfile> findByApprovalStatus(ApprovalStatus approvalStatus);
 
     Optional<ProfessionalProfile> findByUserId(Long userId);
+
+    /**
+     * Cuenta profesionales visibles en el catálogo (aprobados, activos, con
+     * servicio activo) agrupados por categoría. Usado para mostrar
+     * "N profesionales disponibles" en las categorías populares del home.
+     */
+    @Query("""
+        SELECT os.category.id, COUNT(DISTINCT p.id)
+        FROM ProfessionalProfile p
+        JOIN p.offeredServices os
+        WHERE p.approvalStatus = 'APPROVED'
+          AND p.user.active = true
+          AND os.active = true
+        GROUP BY os.category.id
+    """)
+    List<Object[]> countActiveProfessionalsByCategory();
 }

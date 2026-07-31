@@ -26,3 +26,8 @@
   - [x] 4.1 Frontend: Created `AdminDashboardComponent` with tab navigation (Categorías, Profesionales).
   - [x] 4.2 Frontend: Updated `ADMIN_ROUTES` with nested children under AdminDashboardComponent.
   - [x] 4.3 Frontend: Removed old `AdminPlaceholderComponent`.
+
+### Tareas de Refactorización y Mejoras Implementadas
+
+- [x] `ProfessionalProfileService.create` deja de reutilizar `DuplicateEmailException` (código engañoso `DUPLICATE_EMAIL`) cuando el usuario ya tiene un perfil profesional; ahora lanza `ProfileAlreadyExistsException`, manejada en `GlobalExceptionHandler` con HTTP 409 y código semántico `DUPLICATE_RESOURCE`.
+- [x] Handler adicional en `GlobalExceptionHandler` para `ContactNotAvailableException` (409 `CONTACT_NOT_AVAILABLE`), extendiendo el catálogo de códigos de error uniformes documentado en `PROJECT.md`.

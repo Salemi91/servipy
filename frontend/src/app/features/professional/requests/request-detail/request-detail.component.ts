@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
-import { ServiceRequestService } from '../services/service-request.service';
+import { ServiceRequestService } from '@core/http/service-request.service';
 import {
   ServiceRequestDetail,
   ChangeStatusPayload,

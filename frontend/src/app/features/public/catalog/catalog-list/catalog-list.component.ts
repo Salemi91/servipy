@@ -1,5 +1,6 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 import { CatalogService } from '../services/catalog.service';
 import { ProfessionalSummary } from '../../../../shared/models/professional.model';
@@ -31,6 +32,7 @@ type CatalogState = 'loading' | 'loaded' | 'error';
 })
 export class CatalogListComponent implements OnInit {
   private catalogService: CatalogService;
+  private readonly route = inject(ActivatedRoute);
 
   state = signal<CatalogState>('loading');
   professionals = signal<ProfessionalSummary[]>([]);
@@ -40,10 +42,14 @@ export class CatalogListComponent implements OnInit {
   totalPages = signal(0);
 
   selectedCategoryId = signal<number | null>(null);
+  selectedCityId = signal<number | null>(null);
   searchTerm = signal('');
 
   hasFilters = computed(
-    () => this.selectedCategoryId() !== null || this.searchTerm().trim().length > 0
+    () =>
+      this.selectedCategoryId() !== null ||
+      this.selectedCityId() !== null ||
+      this.searchTerm().trim().length > 0
   );
 
   constructor(catalogService: CatalogService) {
@@ -51,6 +57,17 @@ export class CatalogListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Permite llegar con filtros preseleccionados desde el buscador del home
+    // (?categoryId=&cityId=&search=).
+    const params = this.route.snapshot.queryParamMap;
+    const categoryId = params.get('categoryId');
+    const cityId = params.get('cityId');
+    const search = params.get('search');
+
+    if (categoryId) this.selectedCategoryId.set(Number(categoryId));
+    if (cityId) this.selectedCityId.set(Number(cityId));
+    if (search) this.searchTerm.set(search);
+
     this.loadCategories();
     this.loadProfessionals();
   }
@@ -69,6 +86,7 @@ export class CatalogListComponent implements OnInit {
 
   onClearFilters(): void {
     this.selectedCategoryId.set(null);
+    this.selectedCityId.set(null);
     this.searchTerm.set('');
     this.currentPage.set(0);
     this.loadProfessionals();
@@ -94,6 +112,7 @@ export class CatalogListComponent implements OnInit {
     this.catalogService
       .getProfessionals({
         categoryId: this.selectedCategoryId() ?? undefined,
+        cityId: this.selectedCityId() ?? undefined,
         search: this.searchTerm() || undefined,
         page: this.currentPage(),
         size: 12,
@@ -115,6 +134,7 @@ export class CatalogListComponent implements OnInit {
     this.catalogService
       .getProfessionals({
         categoryId: this.selectedCategoryId() ?? undefined,
+        cityId: this.selectedCityId() ?? undefined,
         search: this.searchTerm() || undefined,
         page: this.currentPage(),
         size: 12,

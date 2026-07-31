@@ -158,14 +158,23 @@
   <!-- Desired Date -->
   <div>
     <label for="sr-desiredDate" class="block text-sm font-medium text-gray-700">
-      Fecha deseada
+      Fecha deseada <span class="text-red-500">*</span>
     </label>
     <input
       id="sr-desiredDate"
       type="date"
       formControlName="desiredDate"
       class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      [class.border-red-500]="hasError('desiredDate', 'required') || hasError('desiredDate', 'serverError')"
+      [attr.aria-invalid]="hasError('desiredDate', 'required') || hasError('desiredDate', 'serverError')"
+      aria-describedby="sr-desiredDate-error"
     />
+    <p *ngIf="hasError('desiredDate', 'required')" id="sr-desiredDate-error" class="mt-1 text-xs text-red-600" role="alert">
+      La fecha preferida para el servicio es obligatoria.
+    </p>
+    <p *ngIf="hasError('desiredDate', 'serverError')" id="sr-desiredDate-error" class="mt-1 text-xs text-red-600" role="alert">
+      {{ requestForm.get('desiredDate')?.getError('serverError') }}
+    </p>
   </div>
 
   <!-- Submit Button -->

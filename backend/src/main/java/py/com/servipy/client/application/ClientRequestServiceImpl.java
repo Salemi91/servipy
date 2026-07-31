@@ -3,43 +3,38 @@ package py.com.servipy.client.application;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import py.com.servipy.client.application.dto.ProfessionalContactResponse;
 import py.com.servipy.client.application.dto.ServiceRequestDetailResponse;
 import py.com.servipy.client.application.dto.ServiceRequestPageResponse;
 import py.com.servipy.client.application.dto.ServiceRequestResponse;
-import py.com.servipy.client.domain.RequestStatus;
-import py.com.servipy.client.domain.ServiceRequest;
-import py.com.servipy.client.infrastructure.persistence.ClientServiceRequestRepository;
-import py.com.servipy.client.infrastructure.persistence.ServiceRequestSpecification;
-import py.com.servipy.servicerequest.infrastructure.persistence.ServiceRequestRepository;
-import py.com.servipy.shared.exception.ResourceNotFoundException;
+import py.com.servipy.client.application.exception.ContactNotAvailableException;
+import py.com.servipy.servicerequest.application.ServiceRequestService;
+import py.com.servipy.servicerequest.application.dto.ClientRequestView;
+import py.com.servipy.servicerequest.domain.RequestStatus;
 
+/**
+ * Consultas del cliente sobre sus propias solicitudes.
+ * Los datos pertenecen al slice servicerequest: se consumen a través de su
+ * capa de aplicación y se traducen a los DTOs del contrato del cliente.
+ */
 @Service
 @Transactional(readOnly = true)
 public class ClientRequestServiceImpl implements ClientRequestService {
 
-    private final ClientServiceRequestRepository serviceRequestRepository;
-    private final ServiceRequestRepository mainServiceRequestRepository;
+    private final ServiceRequestService serviceRequestService;
 
-    public ClientRequestServiceImpl(
-            ClientServiceRequestRepository serviceRequestRepository,
-            ServiceRequestRepository mainServiceRequestRepository) {
-        this.serviceRequestRepository = serviceRequestRepository;
-        this.mainServiceRequestRepository = mainServiceRequestRepository;
+    public ClientRequestServiceImpl(ServiceRequestService serviceRequestService) {
+        this.serviceRequestService = serviceRequestService;
     }
 
     @Override
     public ServiceRequestPageResponse getRequests(String clientEmail, String status, int page, int size) {
-        RequestStatus requestStatus = parseStatus(status);
-
-        Specification<ServiceRequest> spec = ServiceRequestSpecification.build(clientEmail, requestStatus);
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-
-        Page<ServiceRequest> resultPage = serviceRequestRepository.findAll(spec, pageable);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ClientRequestView> resultPage =
+            serviceRequestService.findByClientEmail(clientEmail, parseStatus(status), pageable);
 
         return new ServiceRequestPageResponse(
             resultPage.getContent().stream()
@@ -54,27 +49,33 @@ public class ClientRequestServiceImpl implements ClientRequestService {
 
     @Override
     public ServiceRequestDetailResponse getRequestDetail(Long requestId, String clientEmail) {
-        py.com.servipy.servicerequest.domain.ServiceRequest entity =
-            mainServiceRequestRepository.findById(requestId)
-                .orElseThrow(() -> new ResourceNotFoundException("Solicitud no encontrada"));
-
-        // Verificar que la solicitud pertenece al usuario autenticado
-        if (!entity.getClientEmail().equalsIgnoreCase(clientEmail)) {
-            throw new ResourceNotFoundException("Solicitud no encontrada");
-        }
-
-        String professionalName = entity.getProfessional().getUser().getName();
-        String desiredDate = entity.getDesiredDate() != null ? entity.getDesiredDate().toString() : null;
+        ClientRequestView view = serviceRequestService.findByIdAndClientEmail(requestId, clientEmail);
 
         return new ServiceRequestDetailResponse(
-            entity.getId(),
-            professionalName,
-            entity.getSubject(),
-            entity.getDescription(),
-            desiredDate,
-            entity.getStatus().name(),
-            entity.getCreatedAt(),
-            entity.getUpdatedAt()
+            view.id(),
+            view.professionalName(),
+            view.subject(),
+            view.description(),
+            view.desiredDate() != null ? view.desiredDate().toString() : null,
+            view.status().name(),
+            view.createdAt(),
+            view.updatedAt()
+        );
+    }
+
+    @Override
+    public ProfessionalContactResponse getProfessionalContact(Long requestId, String clientEmail) {
+        ClientRequestView view = serviceRequestService.findByIdAndClientEmail(requestId, clientEmail);
+
+        if (view.status() != RequestStatus.ACCEPTED) {
+            throw new ContactNotAvailableException(
+                "Los datos de contacto están disponibles cuando el profesional acepta la solicitud");
+        }
+
+        return new ProfessionalContactResponse(
+            view.professionalName(),
+            view.professionalPhone(),
+            view.professionalWhatsapp()
         );
     }
 
@@ -91,14 +92,14 @@ public class ClientRequestServiceImpl implements ClientRequestService {
         }
     }
 
-    private ServiceRequestResponse toResponse(ServiceRequest entity) {
+    private ServiceRequestResponse toResponse(ClientRequestView view) {
         return new ServiceRequestResponse(
-            entity.getId(),
-            entity.getServiceName(),
-            entity.getProfessionalName(),
-            entity.getStatus().name(),
-            entity.getCreatedAt(),
-            entity.getUpdatedAt()
+            view.id(),
+            view.subject(),
+            view.professionalName(),
+            view.status().name(),
+            view.createdAt(),
+            view.updatedAt()
         );
     }
 }
